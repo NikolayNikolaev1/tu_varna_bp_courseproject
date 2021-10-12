@@ -1,55 +1,99 @@
 #include <iostream>
-#define MAX_NAME_LENGTH 255
-#define EGN_LENGTH 11
+#include <string>
 #define CONTROL_DIGIT_ALGORITHM_DIVIDER 11
+#define EGN_LENGTH 10
+#define MAX_NAME_LENGTH 255
 
 using namespace std;
 
-enum  Gender {
+enum Gender {
 	male,
 	female,
 	unknown
 };
 
-struct CPerson {
-	char name[MAX_NAME_LENGTH];
+class CPerson {
+private:
+	string name;
 	Gender gender;
-	char egn[EGN_LENGTH];
+	string egn;
 
-	CPerson() {
-		SetName("default");
-		SetGender(Gender::unknown);
-	}
+public:
+	CPerson()
+		: CPerson("default", Gender::unknown, "0000000000") { }
 
-	CPerson(const char* str_name, const Gender enum_gender) {
-		SetName(str_name);
-		SetGender(enum_gender);
+	CPerson(const string& name, const Gender& gender)
+		: CPerson(name, gender, "0000000000") { }
+
+	CPerson(const string& name, const string& egn)
+		: CPerson(name, Gender::unknown, egn) { }
+
+	CPerson(const string& name, const Gender& gender, const string& egn) {
+		SetName(name);
+		SetGender(gender);
+		SetEGN(egn);
 	}
 
 	// Getters
-	const char* GetName() const {
-		return name;
+	const string GetName() const {
+		return this->name;
 	}
 
 	const Gender GetGender() const {
-		return gender;
+		return this->gender;
+	}
+
+	const string GetEGN() const {
+		return this->egn;
 	}
 
 	// Setters
-	void SetName(const char* str_name) {
-		strcpy_s(name, str_name); //copy string
+	void SetName(const string& name) {
+		this->name = name;
 	}
 
-	void SetGender(const Gender enum_gender) {
-		gender = enum_gender;
+	void SetGender(const Gender& gender) {
+		this->gender = gender;
 	}
 
-	void SetEGN(const char* str_egn) {
-		strcpy_s(egn, str_egn); //copy string
+	void SetEGN(const string& egn) {
+		if (!this->IsValidEGN(egn)) {
+			// EGN Validation using algorithm.
+			cout << "EGN is not valid!" << endl;
+			return;
+		}
+
+		this->egn = egn;
 	}
 
-	bool IsValidEGN() const {
-		if (sizeof(egn) != 11) {
+	const string GenderToString() const {
+		// Converts the gender enum to a string value and returns it.
+		switch (this->gender) {
+		case Gender::male:
+			return "male";
+		case Gender::female:
+			return "female";
+		default:
+			return "unknown";
+		}
+	}
+
+	const Gender StringToGender(const string& str_gender) const {
+		// Converts the given string to a Gender enum and returns it.
+		if (str_gender == "male") {
+			return Gender::male;
+		}
+
+		if (str_gender == "female") {
+			return Gender::female;
+		}
+
+		return Gender::unknown;
+	}
+
+private:
+	const bool IsValidEGN(const string& egn) const {
+		if (egn.length() != EGN_LENGTH) {
 			// Valid EGN size is always 10 digits.
 			return false;
 		}
@@ -62,7 +106,7 @@ struct CPerson {
 			return false;
 		}
 
-		if (CharToInt(egn[9]) != GetControlDigit()) {
+		if (!this->IsControlDigitValid(egn)) {
 			// Valid EGN has a Control Digit as the last digit, that is calculated with a algorithm.
 			return false;
 		}
@@ -70,40 +114,31 @@ struct CPerson {
 		return true;
 	}
 
-	const char* GenderToString() const {
-		// Converts teh given gender enum to a string value and returns it.
-		switch (gender) {
-		case Gender::male:
-			return "male";
-		case Gender::female:
-			return "female";
-		default:
-			return "unknown";
-		}
+	const int CharToInt(char digit) const {
+		return (int)digit - '0';
 	}
 
-	int GetControlDigit() const {
+	const int IsControlDigitValid(const string& egn) const {
 		// Algorithm returns the Control Digit, which is the last digit of the EGN.
 		int sum = 0;
+		int control_digit = CharToInt(egn[9]);
 
-		for (int i = 0; i < sizeof(egn) - 2; i++) {
+		for (int i = 0; i < EGN_LENGTH - 1; i++) {
 			// Get the sum of the multiplication of each digit with its position weight.
 			sum += CharToInt(egn[i]) * GetEgnPositionWeight(i);
 		}
 
 		// The control digit is the sum modul of 11, when it is less than 10, else it is 0.
-		if (sum % CONTROL_DIGIT_ALGORITHM_DIVIDER <= 9) {
-			return sum % CONTROL_DIGIT_ALGORITHM_DIVIDER;
+		if (sum % CONTROL_DIGIT_ALGORITHM_DIVIDER > 9) {
+			// Control digit should be 0.
+			return control_digit == '0';
 		}
 
-		return 0;
+		// Control digit should be the sum modul of 11.
+		return sum % CONTROL_DIGIT_ALGORITHM_DIVIDER == control_digit;
 	}
 
-	int CharToInt(char digit) const {
-		return (int)digit - '0';
-	}
-
-	int GetEgnPositionWeight(int egn_position) const {
+	const int GetEgnPositionWeight(int egn_position) const {
 		// Returns egn weight based on the egn digit position.
 		switch (egn_position) {
 		case 0:
@@ -124,21 +159,18 @@ struct CPerson {
 			return 3;
 		case 8:
 			return 6;
-			break;
 		}
 	}
 };
 
 int main() {
+	// Testing data.
 	CPerson* default_person = new CPerson();
-	cout << default_person->name << " " << default_person->GenderToString() << endl;
+	cout << default_person->GetName() << " " << default_person->GenderToString() << endl;
 	delete default_person;
 
-	CPerson* person = new CPerson("tester", Gender::male);
-	cout << person->name << " " << person->GenderToString() << endl;
-
-	person->SetEGN("7552010005");
-	cout << person->IsValidEGN();
+	CPerson* person = new CPerson("tester", Gender::male, "6101057509");
+	cout << person->GetName() << " " << person->GenderToString() << endl;
 
 	delete person;
 
