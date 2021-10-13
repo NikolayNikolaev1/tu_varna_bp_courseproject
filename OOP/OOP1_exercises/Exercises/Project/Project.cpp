@@ -2,7 +2,6 @@
 #include <string>
 #define CONTROL_DIGIT_ALGORITHM_DIVIDER 11
 #define EGN_LENGTH 10
-#define MAX_NAME_LENGTH 255
 
 using namespace std;
 
@@ -10,6 +9,46 @@ enum Gender {
 	male,
 	female,
 	unknown
+};
+
+class CAddress {
+private:
+	string street;
+	string zip_code;
+	string city;
+
+public:
+	CAddress()
+		: CAddress("Default Street", "N/A", "Defautl City") { }
+
+	CAddress(const string& street, const string& zip_code, const string& city) {
+		this->street = street;
+		this->zip_code = zip_code;
+		this->city = city;
+	}
+
+	CAddress(const CAddress& address)
+		: CAddress(address.street, address.zip_code, address.city) { }
+
+	// Getters
+	const string GetStreet() const {
+		return this->street;
+	}
+
+	const string GetZipCode() const {
+		return this->zip_code;
+	}
+
+	const string GetCity() const {
+		return this->city;
+	}
+
+	ostream& Output(ostream& to_stream) const {
+		// Returns output info of the current address.
+		return to_stream << "Street Name: " << this->street << endl
+			<< "ZIP Code: " << this->zip_code << endl
+			<< "City Name: " << this->city << endl;
+	}
 };
 
 class CPerson {
@@ -76,6 +115,13 @@ public:
 		default:
 			return "unknown";
 		}
+	}
+
+	ostream& Output(ostream& to_stream) const {
+		// Returns output info of the current person.
+		return to_stream << "Name: " << this->name << endl
+			<< "Gender: " << this->GenderToString() << endl
+			<< "EGN: " << this->egn << endl;
 	}
 
 	const Gender StringToGender(const string& str_gender) const {
@@ -163,16 +209,59 @@ private:
 	}
 };
 
+class CStudent : public CPerson {
+private:
+	string faculty_number;
+	CAddress address;
+
+public:
+	CStudent()
+		: CPerson() {
+		this->faculty_number = "N/A";
+		this->address = CAddress();
+	}
+
+	CStudent(const string& name, const string& egn, const CAddress& address)
+		: CPerson(name, egn) {
+		this->address = address;
+	}
+
+	CStudent(const string& name, const string& egn, const string& faculty_number, const CAddress& address)
+		: CPerson(name, egn) {
+		this->faculty_number = faculty_number;
+		this->address = address;
+	}
+
+	// Getters
+	const string GetFacultyNumber() const {
+		return this->faculty_number;
+	}
+
+	const CAddress GetAddress() const {
+		return this->address;
+	}
+
+	ostream& Output(ostream& to_stream) const {
+		// Returns output info of the current person, his address and faculty number.
+		CPerson::Output(to_stream);
+		this->address.Output(to_stream);
+
+		return to_stream << "Faculty Number: " << this->faculty_number << endl;
+	}
+};
+
 int main() {
 	// Testing data.
-	CPerson* default_person = new CPerson();
-	cout << default_person->GetName() << " " << default_person->GenderToString() << endl;
-	delete default_person;
+	CAddress default_address = CAddress();
+	CStudent* student = new CStudent("Tester", "6101057509", "20623311", default_address);
+	CStudent* default_student = new CStudent();
 
-	CPerson* person = new CPerson("tester", Gender::male, "6101057509");
-	cout << person->GetName() << " " << person->GenderToString() << endl;
+	//student->Output(cout);
+	//default_student->Output(cout);
 
-	delete person;
+	default_student->GetAddress().Output(cout);
+
+	delete student, default_student;
 
 	return 0;
 }
