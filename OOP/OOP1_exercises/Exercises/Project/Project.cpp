@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <string>
 #define CONTROL_DIGIT_ALGORITHM_DIVIDER 11
@@ -48,6 +49,10 @@ public:
 		return to_stream << "Street Name: " << this->street << endl
 			<< "ZIP Code: " << this->zip_code << endl
 			<< "City Name: " << this->city << endl;
+	}
+
+	friend ostream& operator<<(ostream& to_stream, const CAddress& address) {
+		return address.Output(to_stream);
 	}
 };
 
@@ -124,6 +129,10 @@ public:
 			<< "EGN: " << this->egn << endl;
 	}
 
+	friend ostream& operator<<(ostream& to_stream, const CPerson& person) {
+		return person.Output(to_stream);
+	}
+
 	const Gender StringToGender(const string& str_gender) const {
 		// Converts the given string to a Gender enum and returns it.
 		if (str_gender == "male") {
@@ -137,7 +146,45 @@ public:
 		return Gender::unknown;
 	}
 
-private:
+protected:
+	int GetAge() const {
+		// Get current age based on October 1st 2021.
+		int birth_year, birth_month, birth_day, age;
+
+		this->GetYMD(this->egn, birth_year, birth_month, birth_day);
+
+		age = 2021 - birth_year;
+
+		if (birth_month > 10 || 
+			(birth_month = 10 && birth_day >= 1))
+		{
+			age++;
+		}
+
+		return age;
+	}
+
+	void GetYMD(const string& egn, int& year, int& month, int& day) const {
+		// Calculates the year, month and day of birth from the egn using algorithm.
+		year = atoi(egn.substr(0, 2).data());// atoit - converts string to int
+		month = atoi(egn.substr(2, 2).data());
+		day = atoi(egn.substr(4, 2).data());
+
+		if (month <= 12) {
+			year += 1900;
+		}
+		else if (month <= 32) {
+			// People born in the 1800s have 20 added to their month.
+			year += 1800;
+			month -= 20;
+		}
+		else {
+			// People born in the 2000s have 40 added in theyr month.
+			year += 2000;
+			month -= 40;
+		}
+	}
+
 	const bool IsValidEGN(const string& egn) const {
 		if (egn.length() != EGN_LENGTH) {
 			// Valid EGN size is always 10 digits.
@@ -160,6 +207,7 @@ private:
 		return true;
 	}
 
+private:
 	const int CharToInt(char digit) const {
 		return (int)digit - '0';
 	}
@@ -248,20 +296,65 @@ public:
 
 		return to_stream << "Faculty Number: " << this->faculty_number << endl;
 	}
+
+	friend ostream& operator<<(ostream& to_stream, const CStudent& student) {
+		return student.Output(to_stream);
+	}
+
+	friend bool operator==(CStudent& first_student, CStudent& second_sudent) {
+		return first_student.GetAge() == second_sudent.GetAge();
+	}
+
+	friend bool operator!=(CStudent& first_student, CStudent& second_student) {
+		return first_student.GetAge() != second_student.GetAge();
+	}
+
+	friend bool operator>=(CStudent& first_student, CStudent& second_student) {
+		return first_student.GetAge() >= second_student.GetAge();
+	}
+
+	friend bool operator<=(CStudent& first_student, CStudent& second_Student) {
+		return first_student.GetAge() <= second_Student.GetAge();
+	}
+
+	friend void ConsoleInputEGN(CStudent& student) {
+		// Set student EGN from input if valid.
+		string egn;
+
+		cout << student << "Enter EGN: ";
+		cin >> egn;
+
+		if (student.IsValidEGN(egn)) {
+			student.SetEGN(egn);
+		}
+		else {
+			cout << "Invalid EGN!" << endl;
+		}
+	}
 };
 
+void OutputStudentsInFile(CStudent* students[]);
 int main() {
-	// Testing data.
-	CAddress default_address = CAddress();
-	CStudent* student = new CStudent("Tester", "6101057509", "20623311", default_address);
+	CAddress address = CAddress("Test street", "1000", "Sofia");
 	CStudent* default_student = new CStudent();
+	CStudent* first_student = new CStudent("Test Tester", "7552010005", "26003311", address);
+	CStudent* second_student = new CStudent("Tester", "8032056031", "26003312", address);
 
-	//student->Output(cout);
-	//default_student->Output(cout);
+	CStudent* students[3] = { default_student, first_student, second_student };
 
-	default_student->GetAddress().Output(cout);
+	OutputStudentsInFile(students);
 
-	delete student, default_student;
-
+	delete default_student, first_student, second_student, students;
 	return 0;
+}
+
+void OutputStudentsInFile(CStudent* students[]) {
+	// Writes the output studetns in a file.
+	fstream file("StudentList.txt", ios_base::out);
+
+	for (int i = 0; i < sizeof(students); i++) {
+		students[i]->Output(file);
+	}
+
+	file.close();
 }
