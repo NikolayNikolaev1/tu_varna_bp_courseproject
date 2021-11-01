@@ -3,6 +3,7 @@
 #include <string>
 #define CONTROL_DIGIT_ALGORITHM_DIVIDER 11
 #define EGN_LENGTH 10
+#define MAX_PEOPLE_IN_CITY 9
 
 using namespace std;
 
@@ -61,21 +62,26 @@ private:
 	string name;
 	Gender gender;
 	string egn;
+	CAddress home_address;
 
 public:
 	CPerson()
-		: CPerson("default", Gender::unknown, "0000000000") { }
+		: CPerson("default", Gender::unknown, "0000000000", CAddress()) { }
 
 	CPerson(const string& name, const Gender& gender)
-		: CPerson(name, gender, "0000000000") { }
+		: CPerson(name, gender, "0000000000", CAddress()) { }
 
 	CPerson(const string& name, const string& egn)
-		: CPerson(name, Gender::unknown, egn) { }
+		: CPerson(name, Gender::unknown, egn, CAddress()) { }
 
-	CPerson(const string& name, const Gender& gender, const string& egn) {
+	CPerson(const string& name, const Gender& gender, const string& egn)
+		: CPerson(name, gender, egn, CAddress()) { }
+
+	CPerson(const string& name, const Gender& gender, const string& egn, const CAddress& address) {
 		SetName(name);
 		SetGender(gender);
 		SetEGN(egn);
+		SetHomeAddress(address);
 	}
 
 	// Getters
@@ -89,6 +95,10 @@ public:
 
 	const string GetEGN() const {
 		return this->egn;
+	}
+
+	const CAddress GetHomeAddress() const {
+		return this->home_address;
 	}
 
 	// Setters
@@ -108,6 +118,10 @@ public:
 		}
 
 		this->egn = egn;
+	}
+
+	void SetHomeAddress(const CAddress& address) {
+		this->home_address = address;
 	}
 
 	const string GenderToString() const {
@@ -131,6 +145,24 @@ public:
 
 	friend ostream& operator<<(ostream& to_stream, const CPerson& person) {
 		return person.Output(to_stream);
+	}
+
+	friend bool operator<(const CPerson& first_person, const CPerson& second_person) {
+		return first_person.egn < second_person.egn;
+	}
+
+	friend bool operator==(const CPerson& first_person, const CPerson& secondd_person) {
+		return first_person.egn == secondd_person.egn;
+	}
+
+	istream& Input(istream& from_stream) {
+		string egn, name;
+		from_stream >> name >> egn;
+
+		CPerson try_person(name, egn);
+		*this = try_person;
+
+		return from_stream;
 	}
 
 	const Gender StringToGender(const string& str_gender) const {
@@ -257,6 +289,98 @@ private:
 	}
 };
 
+class CCity {
+private:
+	string name;
+	CPerson people[MAX_PEOPLE_IN_CITY];
+
+public:
+	CCity(const string& file_name) {
+		this->CreateCityFromFile(file_name);
+	}
+
+	istream& Input(istream& from_stream) {
+		string person_info, person_name, person_egn;
+		int people_counter = 0;
+
+		from_stream >> this->name;
+
+		while (from_stream >> person_info) {
+			// Splits person_info by space into 2 string - egn and name.
+			this->SplitPersonInfo(person_info, person_name, person_egn);
+
+			CPerson person = CPerson(person_name, person_egn);
+
+			if (people_counter <= MAX_PEOPLE_IN_CITY) {
+				// Does not add more people to the array in case there are more than the maximum value in city.
+				continue;
+			}
+
+			this->people[people_counter] = person;
+			people_counter++;
+		}
+
+		return from_stream;
+	}
+
+	ostream& Output(ostream& to_stream) const {
+		to_stream << "Name: " << this->name << endl
+			<< "People: " << endl;
+
+		for (int i = 0; i < (sizeof(this->people)/sizeof(*this->people)); i++) {
+			CPerson current_person = this->people[i];
+			to_stream << i + 1 << ". EGN: " << current_person.GetEGN() << " Name: " << current_person.GetName() << endl;
+		}
+
+		return to_stream;
+	}
+
+	friend ostream& operator<<(ostream& to_stream, const CCity& city) {
+		return city.Output(to_stream);
+	}
+
+	friend istream& operator>>(istream& from_stream, CCity& city) {
+		return city.Input(from_stream);
+	}
+
+private:
+	void CreateCityFromFile(string file_name) {
+		// Creates a city from given file that contains city name and person egn and name.
+		string line;
+		string person_name, person_egn;
+		ifstream file(file_name);
+		int line_counter = 0;
+
+		while (getline(file, line))
+		{
+			if (line_counter == 0)
+			{
+				// First line is city name.
+				this->name = line;
+				line_counter++;
+				continue;
+			}
+
+			// Next lines are person EGN and name.
+			if (line_counter <= 9) {
+				// Creates the first 9 people and adds it to people array.
+				this->SplitPersonInfo(line, person_name, person_egn);
+
+				CPerson person = CPerson(person_name, person_egn);
+				this->people[line_counter - 1] = person;
+
+				line_counter++;
+			}
+		}
+	}
+
+	void SplitPersonInfo(string person_info, string& person_name, string& person_egn) {
+		// Splits given info string by space.
+		person_egn = person_info.substr(0, person_info.find(" "));
+		person_name = person_info.substr(person_info.find(" ") + 1);
+	}
+};
+
 class CStudent : public CPerson {
 private:
 	string faculty_number;
@@ -335,7 +459,7 @@ public:
 
 void OutputStudentsInFile(CStudent* students[]);
 int main() {
-	CAddress address = CAddress("Test street", "1000", "Sofia");
+	/*CAddress address = CAddress("Test street", "1000", "Sofia");
 	CStudent* default_student = new CStudent();
 	CStudent* first_student = new CStudent("Test Tester", "7552010005", "26003311", address);
 	CStudent* second_student = new CStudent("Tester", "8032056031", "26003312", address);
@@ -344,7 +468,11 @@ int main() {
 
 	OutputStudentsInFile(students);
 
-	delete default_student, first_student, second_student, students;
+	delete default_student, first_student, second_student, students;*/
+	CCity city = CCity("CityPeopleList.txt");
+
+	cout << city;
+
 	return 0;
 }
 
