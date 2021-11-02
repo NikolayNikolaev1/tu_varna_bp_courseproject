@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 #define CONTROL_DIGIT_ALGORITHM_DIVIDER 11
 #define EGN_LENGTH 10
 #define MAX_PEOPLE_IN_CITY 9
@@ -178,6 +179,13 @@ public:
 		return Gender::unknown;
 	}
 
+	static int Compare(const void* first_object, const void* second_object) {
+		// Compare people by EGN, then by name.
+		return !((*(CPerson*)first_object) == (*(CPerson*)second_object)) ?
+			((*(CPerson*)first_object) < (*(CPerson*)second_object) ? -1 : 1) :
+			((*(CPerson*)first_object).name > (*(CPerson*)second_object).name);
+	}
+
 protected:
 	int GetAge() const {
 		// Get current age based on October 1st 2021.
@@ -187,7 +195,7 @@ protected:
 
 		age = 2021 - birth_year;
 
-		if (birth_month > 10 || 
+		if (birth_month > 10 ||
 			(birth_month = 10 && birth_day >= 1))
 		{
 			age++;
@@ -292,16 +300,59 @@ private:
 class CCity {
 private:
 	string name;
-	CPerson people[MAX_PEOPLE_IN_CITY];
+	vector<CPerson> people;
 
 public:
 	CCity(const string& file_name) {
 		this->CreateCityFromFile(file_name);
 	}
 
+	void GetDuplicates(vector<CPerson>& duplicates) const {
+		// Get all people with duplicated EGN in vector.
+		CPerson first_person = this->people[0];
+		CPerson current_person;
+		bool is_duplicate = false;
+
+		for (int i = 1; i < people.size(); i++) {
+			current_person = this->people[i];
+			if (first_person == current_person) {
+				// Adds first duplicate person to vector.
+				duplicates.push_back(first_person);
+				is_duplicate = true;
+			}
+			else if (is_duplicate) {
+				// Adds the second duplicate person to vector from the previous loop if the next one isn't duplicate too.
+				duplicates.push_back(first_person);
+				is_duplicate = false;
+			}
+
+			first_person = current_person;
+		}
+	}
+
+	void RemoveDuplicate() {
+		// Remove all duplicated people from vector.
+		vector<CPerson> duplicates;
+		this->GetDuplicates(duplicates);
+		this->RemovePeople(duplicates);
+	}
+
+	void RemovePeople(vector<CPerson> remove_people) {
+		// Remove all people from the given person vector.
+		for (int i = 0; i < this->people.size(); i++) {
+			for (int j = 0; j < remove_people.size(); j++) {
+				if (this->people[i] == remove_people[j]) {
+					this->people.erase(this->people.begin() + i);
+					remove_people.erase(remove_people.begin() + j);
+					i = 0; // start from the beginning to not skip a person.
+					break;
+				}
+			}
+		}
+	}
+
 	istream& Input(istream& from_stream) {
 		string person_info, person_name, person_egn;
-		int people_counter = 0;
 
 		from_stream >> this->name;
 
@@ -311,13 +362,10 @@ public:
 
 			CPerson person = CPerson(person_name, person_egn);
 
-			if (people_counter <= MAX_PEOPLE_IN_CITY) {
+			if (this->people.size() < MAX_PEOPLE_IN_CITY) {
 				// Does not add more people to the array in case there are more than the maximum value in city.
-				continue;
+				this->people.push_back(person);
 			}
-
-			this->people[people_counter] = person;
-			people_counter++;
 		}
 
 		return from_stream;
@@ -327,7 +375,7 @@ public:
 		to_stream << "Name: " << this->name << endl
 			<< "People: " << endl;
 
-		for (int i = 0; i < (sizeof(this->people)/sizeof(*this->people)); i++) {
+		for (int i = 0; i < this->people.size(); i++) {
 			CPerson current_person = this->people[i];
 			to_stream << i + 1 << ". EGN: " << current_person.GetEGN() << " Name: " << current_person.GetName() << endl;
 		}
@@ -349,35 +397,38 @@ private:
 		string line;
 		string person_name, person_egn;
 		ifstream file(file_name);
-		int line_counter = 0;
+		int is_first_line = true;
 
-		while (getline(file, line))
-		{
-			if (line_counter == 0)
-			{
+		while (getline(file, line)) {
+			if (is_first_line) {
 				// First line is city name.
 				this->name = line;
-				line_counter++;
+				is_first_line = false;
 				continue;
 			}
 
 			// Next lines are person EGN and name.
-			if (line_counter <= 9) {
+			if (this->people.size() < MAX_PEOPLE_IN_CITY) {
 				// Creates the first 9 people and adds it to people array.
 				this->SplitPersonInfo(line, person_name, person_egn);
-
 				CPerson person = CPerson(person_name, person_egn);
-				this->people[line_counter - 1] = person;
 
-				line_counter++;
+				this->people.push_back(person);
 			}
 		}
+
+		this->SortPeople();
 	}
 
-	void SplitPersonInfo(string person_info, string& person_name, string& person_egn) {
+	void SplitPersonInfo(const string& person_info, string& person_name, string& person_egn) const {
 		// Splits given info string by space.
 		person_egn = person_info.substr(0, person_info.find(" "));
 		person_name = person_info.substr(person_info.find(" ") + 1);
+	}
+
+	void SortPeople() {
+		// Sort people vector by EGN, then by name;
+		qsort(&people[0], MAX_PEOPLE_IN_CITY, sizeof(CPerson), CPerson::Compare);
 	}
 };
 
@@ -470,7 +521,16 @@ int main() {
 
 	delete default_student, first_student, second_student, students;*/
 	CCity city = CCity("CityPeopleList.txt");
+	vector<CPerson> duplicate_people;
+	city.GetDuplicates(duplicate_people);
+	
+	cout << "Duplicate: " << endl;
+	for (int i = 0; i < duplicate_people.size(); i++) {
+		cout << i+1 << ". " << duplicate_people[i];
+	}
 
+	cout << "People Remod." << endl;
+	city.RemoveDuplicate();
 	cout << city;
 
 	return 0;
