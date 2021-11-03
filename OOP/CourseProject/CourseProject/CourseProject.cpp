@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#define DEFAULT_NUMBER 0
 #define MAX_COLOR_NUMBER 15
 #define MIN_COLOR_NUMBER 0
 
@@ -11,10 +13,12 @@ private:
 	int green;
 	int blue;
 
-	const string INVALID_COLOR_NUMBER_ERROR_MESSAGE = "Color RGB numbers must be between 0 and 15.";
+	const string INPUT_RGB_COLOR_MESSAGE = "Enter integer between 0 and 15 for ";
+	const string INVALID_COLOR_NUMBER_ERROR_MESSAGE = "Color RGB numbers must be between 0 and 15!";
+	static constexpr const char* test = "test"; // TODO
 
 public:
-	CColor() : CColor(0, 0, 0) { }
+	CColor() : CColor(DEFAULT_NUMBER, DEFAULT_NUMBER, DEFAULT_NUMBER) { }
 
 	CColor(const CColor& color)
 		: CColor(color.red, color.green, color.blue) { }
@@ -43,9 +47,25 @@ public:
 		this->SetBlue(blue);
 	}
 
-	ostream& Output(ostream& stream) const {
+	istream& Input(istream& input_stream) {
+		// Reads RGB inputs from stream and sets them in the color properties.
+		int red, green, blue;
+
+		cout << INPUT_RGB_COLOR_MESSAGE << "red: ";
+		input_stream >> red;
+		cout << INPUT_RGB_COLOR_MESSAGE << "blue: ";
+		input_stream >> green;
+		cout << INPUT_RGB_COLOR_MESSAGE << "green: ";
+		input_stream >> blue;
+
+		this->SetColors(red, green, blue);
+
+		return input_stream;
+	}
+
+	ostream& Output(ostream& output_stream) const {
 		// Returns output info of the current color RGB.
-		return stream << "RGB: (" << this->red << ", " << this->green << ", " << this->blue << ")" << endl;
+		return output_stream << "RGB: (" << this->red << ", " << this->green << ", " << this->blue << ")" << endl;
 	}
 
 	friend bool operator==(const CColor& first_color, const CColor& second_color) {
@@ -56,8 +76,12 @@ public:
 		return first_color.RGB() < second_color.RGB();
 	}
 
-	friend ostream& operator<<(ostream& stream, const CColor& color) {
-		return color.Output(stream);
+	friend ostream& operator<<(ostream& output_stream, const CColor& color) {
+		return color.Output(output_stream);
+	}
+
+	friend istream& operator>>(istream& input_stream, CColor& color) {
+		return color.Input(input_stream);
 	}
 
 private:
@@ -95,8 +119,8 @@ private:
 public:
 	CColorPoint()
 		: CColor() {
-		this->SetCoordinateX(0);
-		this->SetCoordianteY(0);
+		this->SetCoordinateX(DEFAULT_NUMBER);
+		this->SetCoordianteY(DEFAULT_NUMBER);
 	}
 
 	CColorPoint(const int& x, const int& y, const CColor& color)
@@ -125,13 +149,47 @@ private:
 	}
 };
 
+typedef vector<CColorPoint> polygon;
+
+void CreateColor(CColor& color);
+void CreateColorPoint(CColorPoint& color_point, const CColor& color);
+
 int main() {
-	try {
-		CColor color = CColor(16, 1, 1);
-	}
-	catch (const string error) {
-		cout << error << endl;
+	int polygon_angles_count;
+	CColor color;
+	CColorPoint color_point;
+	polygon polygon;
+
+	cout << "How many angles does the polygon have: ";
+	cin >> polygon_angles_count;
+
+	for (int i = 1; i <= polygon_angles_count; i++) {
+		try {
+			cout << "Enter RGB color for point #" << i << endl;
+			cin >> color;
+			cout << "Enter coordinates for point #" << i << endl;
+		}
+		catch (const string error) {
+			/* Expected error is when atttemting to create a CColor class from input with incorrect
+			* RGB color property values from input. Valid red, gren and blue values are between 0 and 15.
+			* After the catch block prints the error message, the for iterator goes down by 1
+			* until CColor class is created with valid RGB values. */
+			cout << error << endl;
+			i--;
+		}
+
+		//CreateColor(color);
+		CreateColorPoint(color_point, color);
+		polygon.push_back(color_point);
 	}
 
 	return 0;
+}
+
+void CreateColor(CColor& color) {
+	cin >> color;
+}
+
+void CreateColorPoint(CColorPoint& color_point, const CColor& color) {
+	
 }
