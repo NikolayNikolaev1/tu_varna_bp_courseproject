@@ -13,21 +13,21 @@ private:
 	int green;
 	int blue;
 
-	const string INPUT_RGB_COLOR_MESSAGE = "Enter integer between 0 and 15 for ";
-	const string INVALID_COLOR_NUMBER_ERROR_MESSAGE = "Color RGB numbers must be between 0 and 15!";
+	const char* INPUT_RGB_COLOR_MESSAGE = "Enter integer between 0 and 15 for ";
+	const char* INVALID_COLOR_NUMBER_ERROR_MESSAGE = "Color RGB numbers must be between 0 and 15!";
 	static constexpr const char* test = "test"; // TODO
 
 public:
 	CColor() : CColor(DEFAULT_NUMBER, DEFAULT_NUMBER, DEFAULT_NUMBER) { }
-
-	CColor(const CColor& color)
-		: CColor(color.red, color.green, color.blue) { }
 
 	CColor(const int& red, const int& green, const int& blue) {
 		this->SetRed(red);
 		this->SetGreen(green);
 		this->SetBlue(blue);
 	}
+
+	CColor(const CColor& color)
+		: CColor(color.red, color.green, color.blue) { }
 
 	void GetColor(int& red, int& green, int& blue) const {
 		red = this->red;
@@ -117,8 +117,7 @@ private:
 	int y_coordinate;
 
 public:
-	CColorPoint()
-		: CColor() {
+	CColorPoint() : CColor() {
 		this->SetCoordinateX(DEFAULT_NUMBER);
 		this->SetCoordianteY(DEFAULT_NUMBER);
 	}
@@ -128,6 +127,9 @@ public:
 		this->SetCoordinateX(x);
 		this->SetCoordianteY(y);
 	}
+
+	CColorPoint(const CColorPoint& color_point) 
+		: x_coordinate(color_point.x_coordinate), y_coordinate(color_point.y_coordinate) { }
 
 	ostream& Output(ostream& stream) const {
 		CColor::Output(stream);
@@ -169,7 +171,7 @@ int main() {
 			cin >> color;
 			cout << "Enter coordinates for point #" << i << endl;
 		}
-		catch (const string error) {
+		catch (const char* error) {
 			/* Expected error is when atttemting to create a CColor class from input with incorrect
 			* RGB color property values from input. Valid red, gren and blue values are between 0 and 15.
 			* After the catch block prints the error message, the for iterator goes down by 1
@@ -191,5 +193,12 @@ void CreateColor(CColor& color) {
 }
 
 void CreateColorPoint(CColorPoint& color_point, const CColor& color) {
-	
+	int x, y;
+
+	cout << "Enter coordinate for X value: ";
+	cin >> x;
+	cout << "Enter coordinate for Y value: ";
+	cin >> y;
+
+	color_point = CColorPoint(x, y, color);
 }
