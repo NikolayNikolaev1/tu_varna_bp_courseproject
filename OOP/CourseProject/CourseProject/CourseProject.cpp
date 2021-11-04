@@ -15,9 +15,10 @@ private:
 
 	const char* INPUT_RGB_COLOR_MESSAGE = "Enter integer between 0 and 15 for ";
 	const char* INVALID_COLOR_NUMBER_ERROR_MESSAGE = "Color RGB numbers must be between 0 and 15!";
-	static constexpr const char* test = "test"; // TODO
 
 public:
+	static constexpr const char* INPUT_RGB_COLOR_POINT_MESSAGE = "Enter RGB color for point #";
+
 	CColor() : CColor(DEFAULT_NUMBER, DEFAULT_NUMBER, DEFAULT_NUMBER) { }
 
 	CColor(const int& red, const int& green, const int& blue) {
@@ -117,6 +118,10 @@ private:
 	int y_coordinate;
 
 public:
+	static constexpr const char* INPUT_COORDINATES_POINT_MESSAGE = "Enter coordinates for point #";
+	static constexpr const char* INPUT_X_COORDINATE_MESSAGE = "Enter coordinate for X value: ";
+	static constexpr const char* INPUT_Y_COORDINATE_MESSAGE = "Enter coordinate for Y value: ";
+
 	CColorPoint() : CColor() {
 		this->SetCoordinateX(DEFAULT_NUMBER);
 		this->SetCoordianteY(DEFAULT_NUMBER);
@@ -128,16 +133,17 @@ public:
 		this->SetCoordianteY(y);
 	}
 
-	CColorPoint(const CColorPoint& color_point) 
+	CColorPoint(const CColorPoint& color_point)
 		: x_coordinate(color_point.x_coordinate), y_coordinate(color_point.y_coordinate) { }
 
-	ostream& Output(ostream& stream) const {
-		CColor::Output(stream);
-		return stream << "X: " << this->x_coordinate << " Y: " << this->y_coordinate << endl;
+	ostream& Output(ostream& output_stream) const {
+		output_stream << "(X:" << this->x_coordinate << "; Y:" << this->y_coordinate << ") ";
+		
+		return CColor::Output(output_stream);;
 	}
 
-	friend ostream& operator<<(ostream& stream, const CColorPoint& color_point) {
-		return color_point.Output(stream);
+	friend ostream& operator<<(ostream& output_stream, const CColorPoint& color_point) {
+		return color_point.Output(output_stream);
 	}
 
 private:
@@ -150,26 +156,52 @@ private:
 		this->y_coordinate = y;
 	}
 };
+// Using vector of CColor pointers to prevent object slicing when pushing CColorPoint objects.
+typedef vector<CColor*> polygon;
 
-typedef vector<CColorPoint> polygon;
-
-void CreateColor(CColor& color);
-void CreateColorPoint(CColorPoint& color_point, const CColor& color);
+void CreatePolygon(polygon& polygon, const int& angles_count);
+void OutputPolygon(const polygon& polygon);
 
 int main() {
 	int polygon_angles_count;
-	CColor color;
-	CColorPoint color_point;
 	polygon polygon;
 
-	cout << "How many angles does the polygon have: ";
+	cout << "Enter polygon angles count: ";
 	cin >> polygon_angles_count;
 
-	for (int i = 1; i <= polygon_angles_count; i++) {
+	CreatePolygon(polygon, polygon_angles_count);
+	OutputPolygon(polygon);
+
+	return 0;
+}
+
+CColorPoint* CreateColorPoint(const CColor& color) {
+	// Create CColorPoint pointer from user input x and y values.
+	int x, y;
+
+	cout << CColorPoint::INPUT_X_COORDINATE_MESSAGE;
+	cin >> x;
+	cout << CColorPoint::INPUT_Y_COORDINATE_MESSAGE;
+	cin >> y;
+
+	CColorPoint* color_point = new CColorPoint(x, y, color);
+
+	return color_point;
+}
+
+void CreatePolygon(polygon& polygon, const int& angles_count) {
+	CColor color;
+	CColorPoint* color_point = new CColorPoint();
+
+	for (int i = 1; i <= angles_count; i++) {
 		try {
-			cout << "Enter RGB color for point #" << i << endl;
+			cout << CColor::INPUT_RGB_COLOR_POINT_MESSAGE << i << endl;
 			cin >> color;
-			cout << "Enter coordinates for point #" << i << endl;
+
+			cout << CColorPoint::INPUT_COORDINATES_POINT_MESSAGE << i << endl;
+			color_point = CreateColorPoint(color);
+
+			polygon.push_back(color_point);
 		}
 		catch (const char* error) {
 			/* Expected error is when atttemting to create a CColor class from input with incorrect
@@ -179,26 +211,15 @@ int main() {
 			cout << error << endl;
 			i--;
 		}
-
-		//CreateColor(color);
-		CreateColorPoint(color_point, color);
-		polygon.push_back(color_point);
 	}
-
-	return 0;
 }
 
-void CreateColor(CColor& color) {
-	cin >> color;
-}
+void OutputPolygon(const polygon& polygon) {
+	// Outputs polygon colored points in the console.
+	cout << "Polygon Points:" << endl;
 
-void CreateColorPoint(CColorPoint& color_point, const CColor& color) {
-	int x, y;
-
-	cout << "Enter coordinate for X value: ";
-	cin >> x;
-	cout << "Enter coordinate for Y value: ";
-	cin >> y;
-
-	color_point = CColorPoint(x, y, color);
+	for (int i = 0; i < polygon.size(); i++) {
+		cout << "Point #" << i + 1 << ": ";
+		((CColorPoint*)polygon[i])->Output(cout);
+	}
 }
