@@ -1,5 +1,7 @@
 #include <fstream>
 #include <iostream>
+#include <iterator>
+#include <list>
 #include <string>
 #include <vector>
 #define CONTROL_DIGIT_ALGORITHM_DIVIDER 11
@@ -436,24 +438,45 @@ class CStudent : public CPerson {
 private:
 	string faculty_number;
 	CAddress address;
+	double grade;
 
 public:
 	CStudent()
 		: CPerson() {
-		this->faculty_number = "N/A";
-		this->address = CAddress();
+		this->SetFacultyNumber("N/A");
+		this->SetGrade(0.0);
+		this->SetAddress(CAddress());
 	}
 
 	CStudent(const string& name, const string& egn, const CAddress& address)
 		: CPerson(name, egn) {
-		this->address = address;
+		this->SetAddress(address);
+		this->SetFacultyNumber("N/A");
+		this->SetGrade(0.0);
+	}
+
+	CStudent(const string& faculty_number, const double& grade)
+		: CPerson() {
+		this->SetFacultyNumber(faculty_number);
+		this->SetGrade(grade);
 	}
 
 	CStudent(const string& name, const string& egn, const string& faculty_number, const CAddress& address)
 		: CPerson(name, egn) {
-		this->faculty_number = faculty_number;
-		this->address = address;
+		this->SetFacultyNumber(faculty_number);
+		this->SetAddress(address);
+		this->SetGrade(0.0);
 	}
+
+	CStudent(const string& name, const string& egn, const string& faculty_number, const double& grade, const CAddress& address)
+		: CPerson(name, egn) {
+		this->SetFacultyNumber(faculty_number);
+		this->SetAddress(address);
+		this->SetGrade(grade);
+	}
+
+	CStudent(const CStudent& student)
+		: CStudent(student.GetName(), student.GetEGN(), student.faculty_number, student.grade, student.address) { }
 
 	// Getters
 	const string GetFacultyNumber() const {
@@ -464,16 +487,50 @@ public:
 		return this->address;
 	}
 
+	const double GetGrade() const {
+		return this->grade;
+	}
+
+	// Setters
+	void SetFacultyNumber(const string& faculty_number) {
+		this->faculty_number = faculty_number;
+	}
+
+	void SetAddress(const CAddress& address) {
+		this->address = address;
+	}
+
+	void SetGrade(const double& grade) {
+		this->grade = grade;
+	}
+
+	istream& Input(istream& from_stream) {
+		string fac_num;
+		double grade;
+
+		from_stream >> fac_num;
+		from_stream >> grade;
+
+		*this = CStudent(fac_num, grade);
+
+		return from_stream;
+	}
+
 	ostream& Output(ostream& to_stream) const {
 		// Returns output info of the current person, his address and faculty number.
 		CPerson::Output(to_stream);
 		this->address.Output(to_stream);
 
-		return to_stream << "Faculty Number: " << this->faculty_number << endl;
+		return to_stream << "Faculty Number: " << this->faculty_number << endl
+			<< "Grade: " << this->grade << endl;
 	}
 
 	friend ostream& operator<<(ostream& to_stream, const CStudent& student) {
 		return student.Output(to_stream);
+	}
+
+	friend istream& operator>>(istream& from_stream, CStudent& student) {
+		return student.Input(from_stream);
 	}
 
 	friend bool operator==(CStudent& first_student, CStudent& second_sudent) {
@@ -508,6 +565,135 @@ public:
 	}
 };
 
+class CStudentBook {
+private:
+	CStudent student;
+	list<string> subjects;
+	list<int> points;
+
+public:
+	CStudentBook(const CStudent& student) {
+		this->student = student;
+	}
+
+	CStudentBook(const string& file_name) {
+		this->CreateStudentBookFromFile(file_name);
+	}
+
+	void addPoints(const string& subject, const int& points) {
+		// Adds given points to the given subject.
+		int subject_index = 0;
+		auto current_subject = this->subjects.begin();
+		auto current_points = this->points.begin();
+
+		for (int i = 0; i < this->subjects.size(); i++) {
+			if (subject == *current_subject) {
+				advance(current_points, i);
+				*current_points += points;
+				break;
+			}
+		}
+	}
+
+	int getMaxPoints() const {
+		// Returns max points
+		int max_points = 0;
+		auto current_points = this->points.begin();
+
+		for (int i = 0; i < this->points.size(); i++) {
+			if (max_points < *current_points) {
+				max_points = *current_points;
+			}
+
+			advance(current_points, 1);
+		}
+
+		return max_points;
+	}
+
+	int getMinPoints() const {
+		// Returns min points;
+		int min_points = 100;
+		auto current_points = this->points.begin();
+
+		for (int i = 0; i < this->points.size(); i++) {
+			if (min_points > *current_points) {
+				min_points = *current_points;
+			}
+
+			advance(current_points, 1);
+		}
+
+		return min_points;
+	}
+
+	ostream& Output(ostream& to_stream) const {
+		to_stream << "Faculty Number: " << this->student.GetFacultyNumber() << " - "
+			<< "Grade: " << this->student.GetGrade() << endl;
+
+		auto current_subject = this->subjects.begin();
+		auto current_points = this->points.begin();
+
+		for (int i = 0; i < this->subjects.size(); i++) {
+			advance(current_subject, i);
+			advance(current_points, i);
+
+			to_stream << "Subject: " << *current_subject << " - "
+				<< "Points: " << *current_points << endl;
+
+			current_subject = this->subjects.begin();
+			current_points = this->points.begin();
+		}
+
+		return to_stream;
+	}
+
+	friend ostream& operator<<(ostream& to_stream, const CStudentBook& student_book) {
+		return student_book.Output(to_stream);
+	}
+
+private:
+	void CreateStudentBookFromFile(string file_name) {
+		// Creates a studnt book from given file that contains faculty number, grade, subject and points.
+		string line;
+		string faculty_number, subject_name;
+		double grade;
+		int subject_points;
+		ifstream file(file_name);
+		int is_first_line = true;
+
+		while (getline(file, line)) {
+			if (is_first_line) {
+				// First line is student faculty number and grade.
+				this->SplitStudentInfo(line, faculty_number, grade);
+				this->student.SetFacultyNumber(faculty_number);
+				this->student.SetGrade(grade);
+
+				is_first_line = false;
+				continue;
+			}
+
+			// Next lines are subject name and subject points.
+			this->SplitSubjectInfo(line, subject_name, subject_points);
+			this->subjects.push_back(subject_name);
+			this->points.push_back(subject_points);
+		}
+	}
+
+
+	void SplitStudentInfo(const string& student_info, string& faculty_number, double& grade) const {
+		// Splits given student info string by space.
+		faculty_number = student_info.substr(0, student_info.find(" "));
+		grade = stod(student_info.substr(student_info.find(" ") + 1));
+	}
+
+	void SplitSubjectInfo(const string& subject_info, string& subject_name, int& subject_points) const {
+		// Split given subject info by space.
+		subject_name = subject_info.substr(0, subject_info.find(" "));
+		subject_points = stoi(subject_info.substr(subject_info.find(" ") + 1));
+	}
+};
+
 void OutputStudentsInFile(CStudent* students[]);
 int main() {
 	/*CAddress address = CAddress("Test street", "1000", "Sofia");
@@ -520,18 +706,26 @@ int main() {
 	OutputStudentsInFile(students);
 
 	delete default_student, first_student, second_student, students;*/
-	CCity city = CCity("CityPeopleList.txt");
+	/*CCity city = CCity("CityPeopleList.txt");
 	vector<CPerson> duplicate_people;
 	city.GetDuplicates(duplicate_people);
-	
+
 	cout << "Duplicate: " << endl;
 	for (int i = 0; i < duplicate_people.size(); i++) {
-		cout << i+1 << ". " << duplicate_people[i];
+		cout << i + 1 << ". " << duplicate_people[i];
 	}
 
 	cout << "People Remod." << endl;
 	city.RemoveDuplicate();
-	cout << city;
+	cout << city;*/
+
+	CStudentBook student_book = CStudentBook("StudentBookList.txt");
+	cout << student_book;
+	cout << student_book.getMinPoints() << endl;
+	cout << student_book.getMaxPoints() << endl;
+	student_book.addPoints("OOP1", 20);
+	cout << student_book;
+
 
 	return 0;
 }
