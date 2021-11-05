@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iterator>
 #include <list>
+#include <map>
 #include <string>
 #include <vector>
 #define CONTROL_DIGIT_ALGORITHM_DIVIDER 11
@@ -691,6 +692,104 @@ private:
 		// Split given subject info by space.
 		subject_name = subject_info.substr(0, subject_info.find(" "));
 		subject_points = stoi(subject_info.substr(subject_info.find(" ") + 1));
+	}
+};
+
+class CCar {
+private:
+	int power;
+	string model;
+	string register_number;
+	string owner;
+
+public:
+	static string city_code;
+	static map<string, string> city_code_name_map;
+	static multimap<string, string> city_name_code_multimap;
+
+	CCar() :CCar(0, "N/A", "N/A", "N/A") { }
+
+	CCar(const int& power, const string& model, const string& register_number, const string& owner) {
+		this->SetPower(power);
+		this->SetModel(model);
+		this->SetRegisterNumber(register_number);
+		this->SetOwner(owner);
+	}
+
+	CCar(const CCar& car)
+		: CCar(car.power, car.model, car.register_number, car.owner) { }
+
+	static string GetCityCode(string register_number) {
+
+	}
+
+	friend bool operator==(const CCar& first_car, const CCar& second_car) {
+		return first_car.owner == second_car.owner;
+	}
+
+	friend bool operator<(const CCar& first_car, const CCar& second_car) {
+		return first_car.register_number < second_car.register_number;
+	}
+
+	friend ostream& operator<<(ostream& to_stream, const CCar& car) {
+		return car.Output(to_stream);
+	}
+
+	friend istream& operator>>(istream& from_stream, CCar& car) {
+		return car.Input(from_stream);
+	}
+
+private:
+	// Getters
+	const int GetPower() const {
+		return this->power;
+	}
+
+	const string GetModel() const {
+		return this->model;
+	}
+
+	const string GetRegisterNumber() const {
+		return this->register_number;
+	}
+
+	const string GetOwner() const {
+		return this->owner;
+	}
+
+	// Setters
+	void SetPower(const int& power) {
+		this->power = power;
+	}
+
+	void SetModel(const string& model) {
+		this->model = model;
+	}
+
+	void SetRegisterNumber(const string& register_number) {
+		this->register_number = register_number;
+	}
+
+	void SetOwner(const string& owner) {
+		this->owner = owner;
+	}
+
+	istream& Input(istream& from_stream) {
+		int power;
+		string model, reg_num, owner;
+
+		from_stream >> power >> model >> reg_num >> owner;
+
+		*this = CCar(power, model, reg_num, owner);
+
+		return from_stream;
+	}
+
+	ostream& Output(ostream& to_stream) const {
+		return to_stream << "Power: " << this->power << endl
+			<< "Model: " << this->model << endl
+			<< "Register Number: " << this->register_number << endl
+			<< "Owner: " << this->owner << endl;
 	}
 };
 
