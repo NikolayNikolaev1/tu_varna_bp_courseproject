@@ -13,7 +13,6 @@ private:
 	int green;
 	int blue;
 
-	const char* INPUT_RGB_COLOR_MESSAGE = "Enter integer between 0 and 15 for ";
 	const char* INVALID_COLOR_NUMBER_ERROR_MESSAGE = "Color RGB numbers must be between 0 and 15!";
 
 public:
@@ -48,22 +47,6 @@ public:
 		this->SetBlue(blue);
 	}
 
-	istream& Input(istream& input_stream) {
-		// Reads RGB inputs from stream and sets them in the color properties.
-		int red, green, blue;
-
-		cout << INPUT_RGB_COLOR_MESSAGE << "red: ";
-		input_stream >> red;
-		cout << INPUT_RGB_COLOR_MESSAGE << "blue: ";
-		input_stream >> green;
-		cout << INPUT_RGB_COLOR_MESSAGE << "green: ";
-		input_stream >> blue;
-
-		this->SetColors(red, green, blue);
-
-		return input_stream;
-	}
-
 	ostream& Output(ostream& output_stream) const {
 		// Returns output info of the current color RGB.
 		return output_stream << "RGB: (" << this->red << ", " << this->green << ", " << this->blue << ")" << endl;
@@ -79,10 +62,6 @@ public:
 
 	friend ostream& operator<<(ostream& output_stream, const CColor& color) {
 		return color.Output(output_stream);
-	}
-
-	friend istream& operator>>(istream& input_stream, CColor& color) {
-		return color.Input(input_stream);
 	}
 
 private:
@@ -118,10 +97,6 @@ private:
 	int y_coordinate;
 
 public:
-	static constexpr const char* INPUT_COORDINATES_POINT_MESSAGE = "Enter coordinates for point #";
-	static constexpr const char* INPUT_X_COORDINATE_MESSAGE = "Enter coordinate for X value: ";
-	static constexpr const char* INPUT_Y_COORDINATE_MESSAGE = "Enter coordinate for Y value: ";
-
 	CColorPoint() : CColor() {
 		this->SetCoordinateX(DEFAULT_NUMBER);
 		this->SetCoordianteY(DEFAULT_NUMBER);
@@ -132,9 +107,6 @@ public:
 		this->SetCoordinateX(x);
 		this->SetCoordianteY(y);
 	}
-
-	CColorPoint(const CColorPoint& color_point)
-		: x_coordinate(color_point.x_coordinate), y_coordinate(color_point.y_coordinate) { }
 
 	ostream& Output(ostream& output_stream) const {
 		output_stream << "(X:" << this->x_coordinate << "; Y:" << this->y_coordinate << ") ";
@@ -179,14 +151,28 @@ CColorPoint* CreateColorPoint(const CColor& color) {
 	// Create CColorPoint pointer from user input x and y values.
 	int x, y;
 
-	cout << CColorPoint::INPUT_X_COORDINATE_MESSAGE;
+	cout << "Enter coordinate for X value: ";
 	cin >> x;
-	cout << CColorPoint::INPUT_Y_COORDINATE_MESSAGE;
+	cout << "Enter coordinate for Y value: ";
 	cin >> y;
 
 	CColorPoint* color_point = new CColorPoint(x, y, color);
 
 	return color_point;
+}
+
+void CreateColor(CColor& color) {
+	int red, green, blue;
+
+	cout << "Enter integer between 0 and 15 for red: ";
+	cin >> red;
+	cout << "Enter integer between 0 and 15 for blue: ";
+	cin >> green;
+	cout << "Enter integer between 0 and 15 for green: ";
+	cin >> blue;
+
+	color.SetColors(red, green, blue);
+
 }
 
 void CreatePolygon(polygon& polygon, const int& angles_count) {
@@ -196,9 +182,9 @@ void CreatePolygon(polygon& polygon, const int& angles_count) {
 	for (int i = 1; i <= angles_count; i++) {
 		try {
 			cout << CColor::INPUT_RGB_COLOR_POINT_MESSAGE << i << endl;
-			cin >> color;
+			CreateColor(color);
 
-			cout << CColorPoint::INPUT_COORDINATES_POINT_MESSAGE << i << endl;
+			cout << "Enter coordinates for point #" << i << endl;
 			color_point = CreateColorPoint(color);
 
 			polygon.push_back(color_point);
