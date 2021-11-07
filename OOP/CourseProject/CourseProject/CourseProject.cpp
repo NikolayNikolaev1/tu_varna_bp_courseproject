@@ -35,7 +35,7 @@ public:
 	}
 
 	const int RGB() const {
-		// Sums and returns the RGB numbers.
+		// Converts RGB to Decimal using rgb formula.
 		return this->red * (RGB_VALUES_COUNT * RGB_VALUES_COUNT) + this->green * RGB_VALUES_COUNT + this->blue;
 	}
 
