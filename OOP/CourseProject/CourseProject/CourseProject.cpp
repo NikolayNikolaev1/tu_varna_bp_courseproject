@@ -46,11 +46,6 @@ public:
 		this->SetBlue(blue);
 	}
 
-	ostream& Output(ostream& output_stream) const {
-		// Returns output info of the current color RGB.
-		return output_stream << "RGB: (" << this->red << ", " << this->green << ", " << this->blue << ")" << endl;
-	}
-
 	friend bool operator==(const CColor& first_color, const CColor& second_color) {
 		return first_color.RGB() == second_color.RGB();
 	}
@@ -61,6 +56,12 @@ public:
 
 	friend ostream& operator<<(ostream& output_stream, const CColor& color) {
 		return color.Output(output_stream);
+	}
+
+protected:
+	ostream& Output(ostream& output_stream) const {
+		// Returns output info of the current color RGB.
+		return output_stream << "RGB: (" << this->red << ", " << this->green << ", " << this->blue << ")" << endl;
 	}
 
 private:
@@ -108,12 +109,6 @@ public:
 		this->DecimalToRGB(color);
 	}
 
-	ostream& Output(ostream& output_stream) const {
-		output_stream << "(X:" << this->x_coordinate << "; Y:" << this->y_coordinate << ") ";
-
-		return CColor::Output(output_stream);;
-	}
-
 	friend ostream& operator<<(ostream& output_stream, const CColorPoint& color_point) {
 		return color_point.Output(output_stream);
 	}
@@ -129,12 +124,19 @@ private:
 	}
 
 	void DecimalToRGB(int color) {
-		// COnverts given decimal color to RGB and sets them in the CColor values.
+		// Converts given decimal color to RGB and sets them in the CColor values.
 		int red = floor(color / (RGB_VALUES_COUNT * RGB_VALUES_COUNT));
 		int green = floor((color / RGB_VALUES_COUNT) % RGB_VALUES_COUNT);
 		int blue = color % RGB_VALUES_COUNT;
 
 		CColor::SetColors(red, green, blue);
+	}
+
+	ostream& Output(ostream& output_stream) const {
+		// Returns output info of the current point's coordinate values and the color rgb output.
+		output_stream << "(X:" << this->x_coordinate << "; Y:" << this->y_coordinate << ") ";
+
+		return CColor::Output(output_stream);
 	}
 };
 
