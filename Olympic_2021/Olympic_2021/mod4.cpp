@@ -1,23 +1,39 @@
+#include <cmath>
 #include <iostream>
 
 using namespace std;
 
 int Mod4() {
-	int input_count;
-	cin >> input_count;
+	//int input_count;
+	//cin >> input_count;
 
-	long number, power, result;
-	int mod;
+	//long number, power, result;
+	//int mod;
+
+	//int test;
+
+	//while (input_count--) {
+	//	cin >> number >> power >> mod;
+
+	//	number = number % mod;
+
+	//	for (int i = 1; i < mod; i++) {
+	//		if (pow(number, i) == 1) {
+	//			test = i;
+	//			break;
+	//		}
+	//	}
 
 
-	while (input_count--) {
-		cin >> number >> power >> mod;
 
-		if (number % mod == 0) {
-			result = 0;
-		}
-	}
 
+	//	/*if (number % mod == 0) {
+	//		result = 0;
+	//	}*/
+
+	//}
+
+	cout << (int)(pow(7, 2)) % 43 << endl;
 	return 0;
 }
 

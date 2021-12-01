@@ -6,5 +6,5 @@ extern int SplitInHalf();
 
 int main() {
 
-	return Game20();
+	return SplitInHalf();
 }
