@@ -33,5 +33,8 @@
     <ClCompile Include="Game20.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HanoiTower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

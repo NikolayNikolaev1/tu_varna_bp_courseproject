@@ -88,6 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,6 +143,7 @@
     <ClCompile Include="Beer1.cpp" />
     <ClCompile Include="Digits106.cpp" />
     <ClCompile Include="Game20.cpp" />
+    <ClCompile Include="HanoiTower.cpp" />
     <ClCompile Include="mod4.cpp" />
     <ClCompile Include="Olympic_2021.cpp" />
     <ClCompile Include="SplitInHalf.cpp" />
