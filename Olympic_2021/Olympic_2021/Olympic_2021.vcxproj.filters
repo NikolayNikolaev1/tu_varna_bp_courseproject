@@ -36,5 +36,14 @@
     <ClCompile Include="HanoiTower.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Queens.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LetterCombinations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MaxSumElements.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
