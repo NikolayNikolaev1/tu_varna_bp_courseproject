@@ -6,7 +6,10 @@ using namespace std;
 
 int MaxSumElements() {
 	vector<int> elements_sums;
-	int elements_count, current_element, sum = 0, positive_sum = 0, negative_sum = 0;
+	int elements_count, current_element;
+	int sum = 0;
+	int positive_sum = 0;
+	int negative_sum = 0;
 	bool has_positive_numbers = false;
 	cin >> elements_count;
 
