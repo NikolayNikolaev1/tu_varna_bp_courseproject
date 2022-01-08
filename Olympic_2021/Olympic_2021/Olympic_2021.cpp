@@ -7,6 +7,7 @@ extern int HanoiTower();
 extern int MaxSumElements();
 extern int Mod4();
 extern int SplitInHalf();
+extern int Sum();
 extern int SystemMIU(); 
 extern int Queens();
 
