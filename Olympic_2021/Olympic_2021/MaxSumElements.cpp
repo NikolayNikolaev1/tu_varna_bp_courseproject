@@ -16,12 +16,9 @@ int MaxSumElements() {
 	while (elements_count--) {
 		cin >> current_element;
 		// Skip negative numbers at the input start.
-		if (sum == 0) {
+		if (sum == 0 && current_element <= 0) {
 			negative_sum += current_element; // Saves the negative sum in case there are no positive numbers in the input.
-
-			if (current_element <= 0) {
-				continue;
-			}
+			continue;
 		}
 		// Adds the current input to the sum, when the negative numbers sum are less than the positive numbers sum.
 		sum += current_element;

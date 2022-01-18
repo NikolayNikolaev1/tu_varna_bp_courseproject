@@ -150,6 +150,7 @@
     <ClCompile Include="mod4.cpp" />
     <ClCompile Include="Olympic_2021.cpp" />
     <ClCompile Include="Queens.cpp" />
+    <ClCompile Include="Snail.cpp" />
     <ClCompile Include="SplitInHalf.cpp" />
     <ClCompile Include="Sum.cpp" />
     <ClCompile Include="SystemMIU.cpp" />

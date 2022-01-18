@@ -4,36 +4,38 @@
 using namespace std;
 
 int Mod4() {
-	//int input_count;
-	//cin >> input_count;
+	int input_count;
+	cin >> input_count;
 
-	//long number, power, result;
-	//int mod;
+	long number, power, result;
+	int mod;
 
-	//int test;
+	int test;
 
-	//while (input_count--) {
-	//	cin >> number >> power >> mod;
+	while (input_count--) {
+		cin >> number >> power >> mod;
 
-	//	number = number % mod;
+		if (number % mod == 0) {
+			result = 0;
+			cout << result << endl;
+			continue;
+		}
 
-	//	for (int i = 1; i < mod; i++) {
-	//		if (pow(number, i) == 1) {
-	//			test = i;
-	//			break;
-	//		}
-	//	}
+		number = number % mod;
+
+		for (int i = 1; i < mod; i++) {
+			if (pow(number, i) == 1) {
+				test = i;
+				break;
+			}
+		}
 
 
 
 
-	//	/*if (number % mod == 0) {
-	//		result = 0;
-	//	}*/
 
-	//}
+	}
 
-	cout << (int)(pow(7, 2)) % 43 << endl;
 	return 0;
 }
 
