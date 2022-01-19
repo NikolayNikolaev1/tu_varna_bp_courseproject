@@ -147,6 +147,7 @@
     <ClCompile Include="HanoiTower.cpp" />
     <ClCompile Include="LetterCombinations.cpp" />
     <ClCompile Include="MaxSumElements.cpp" />
+    <ClCompile Include="Mikado.cpp" />
     <ClCompile Include="mod4.cpp" />
     <ClCompile Include="Olympic_2021.cpp" />
     <ClCompile Include="Queens.cpp" />
