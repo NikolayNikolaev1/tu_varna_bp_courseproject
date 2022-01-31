@@ -60,5 +60,8 @@
     <ClCompile Include="Mikado.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FullCombination.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

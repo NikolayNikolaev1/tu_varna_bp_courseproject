@@ -143,6 +143,7 @@
     <ClCompile Include="Beer1.cpp" />
     <ClCompile Include="Digits106.cpp" />
     <ClCompile Include="EgyptionFractions.cpp" />
+    <ClCompile Include="FullCombination.cpp" />
     <ClCompile Include="Game20.cpp" />
     <ClCompile Include="HanoiTower.cpp" />
     <ClCompile Include="LetterCombinations.cpp" />
