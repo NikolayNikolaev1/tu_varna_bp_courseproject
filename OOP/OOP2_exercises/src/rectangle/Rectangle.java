@@ -2,7 +2,7 @@ package rectangle;
 
 import org.w3c.dom.css.Rect;
 
-public class Rectangle {
+public class Rectangle extends Color {
     private int iX1;
     private int iY1;
     private int iX2;
@@ -17,6 +17,11 @@ public class Rectangle {
         this.setIY1(y1);
         this.setIX2(x2);
         this.setIY2(y2);
+    }
+
+    public Rectangle (int x1, int y1, int x2, int y2, long color) {
+        this(x1, y1, x2, y2);
+        super(color);
     }
 
     private int getIX1() {
@@ -86,8 +91,21 @@ public class Rectangle {
     public Rectangle unionRect(Rectangle r) {
         return new Rectangle(Math.min(this.iX1, r.iX1), Math.min(this.iY1, r.iY1), Math.max(this.iX2, r.iX2), Math.max(this.iY2, r.iY2));
     }
+    
+    public Rectangle intersectionRect(Rectangle r) {
+        Rectangle secondRectangle = new Rectangle(Math.max(this.iX1, r.iX1), Math.max(this.iY1, r.iY1), Math.min(this.iX2, r.iX2), Math.min(this.iY2, r.iY2));
 
-    public static void main(String[] args) {
-        System.out.println("Hello world");
+        if (secondRectangle.iX1 >= secondRectangle.iX2) {
+            secondRectangle.iX1 = 0;
+            secondRectangle.iX2 = 0;
+        }
+
+        if (secondRectangle.iY1 >= secondRectangle.iX2) {
+            secondRectangle.iY1 = 0;
+            secondRectangle.iY2 = 0;
+        }
+
+        return secondRectangle;
     }
+
 }
