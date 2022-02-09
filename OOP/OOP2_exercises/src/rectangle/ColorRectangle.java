@@ -1,26 +1,21 @@
 package rectangle;
 
-import org.w3c.dom.css.Rect;
-
-public class Rectangle {
+public class ColorRectangle extends Color implements Comparable{
     private int iX1;
     private int iY1;
     private int iX2;
     private int iY2;
 
-    public Rectangle() {
-
+    public ColorRectangle() {
+        super();
     }
 
-    public Rectangle (int x1, int y1, int x2, int y2) {
+    public ColorRectangle (int x1, int y1, int x2, int y2, long color) {
+        super(color);
         this.setIX1(x1);
         this.setIY1(y1);
         this.setIX2(x2);
         this.setIY2(y2);
-    }
-
-    public Rectangle (int x1, int y1, int x2, int y2, long color) {
-        this(x1, y1, x2, y2);
     }
 
     private int getIX1() {
@@ -55,16 +50,20 @@ public class Rectangle {
         this.iY2 = y2;
     }
 
-    public int area() {
+    public int calcArea() {
         return Math.abs((this.iX2 - this.iX1) * (this.iY2 - this.iY1));
     }
 
-    public int compareTo(Rectangle rectangle) {
-        return Integer.compare(this.area(), rectangle.area());
+
+
+    public int compareTo(Object o) {
+
+        return this.calcArea() < ((ColorRectangle)o).calcArea() ? -1 :
+                this.calcArea() > ((ColorRectangle)o).calcArea() ? 1 : 0;
     }
 
-    public boolean equals(Rectangle rectangle) {
-        return this.compareTo(rectangle) == 0;
+    public boolean equals(ColorRectangle rectangle) {
+        return this.compareTo(rectangle) == 0 && super.equals(new Color(rectangle.getColor()));
     }
 
     public void translateX(int iPoints) {
@@ -87,12 +86,22 @@ public class Rectangle {
                 this.iY1 <= ptY && this.iY2 >= ptY;
     }
 
-    public Rectangle unionRect(Rectangle r) {
-        return new Rectangle(Math.min(this.iX1, r.iX1), Math.min(this.iY1, r.iY1), Math.max(this.iX2, r.iX2), Math.max(this.iY2, r.iY2));
+    public ColorRectangle unionRect(ColorRectangle r) {
+        return new ColorRectangle(
+                Math.min(this.iX1, r.iX1),
+                Math.min(this.iY1, r.iY1),
+                Math.max(this.iX2, r.iX2),
+                Math.max(this.iY2, r.iY2),
+                this.getColor() + r.getColor());
     }
-    
-    public Rectangle intersectionRect(Rectangle r) {
-        Rectangle secondRectangle = new Rectangle(Math.max(this.iX1, r.iX1), Math.max(this.iY1, r.iY1), Math.min(this.iX2, r.iX2), Math.min(this.iY2, r.iY2));
+
+    public ColorRectangle intersectionRect(ColorRectangle r) {
+        ColorRectangle secondRectangle = new ColorRectangle(
+                Math.max(this.iX1, r.iX1),
+                Math.max(this.iY1, r.iY1),
+                Math.min(this.iX2, r.iX2),
+                Math.min(this.iY2, r.iY2),
+                this.getColor() + r.getColor());
 
         if (secondRectangle.iX1 >= secondRectangle.iX2) {
             secondRectangle.iX1 = 0;
@@ -107,4 +116,7 @@ public class Rectangle {
         return secondRectangle;
     }
 
+    public String toString() {
+        return this.iX1 + " " + this.iY1 + " " + this.iX2 + " " + this.iY2 + " " + this.getColor();
+    }
 }

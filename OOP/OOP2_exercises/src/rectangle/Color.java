@@ -1,6 +1,6 @@
 package rectangle;
 
-public class Color {
+public class Color implements Comparable {
     private long red;
     private long green;
     private long blue;
@@ -37,6 +37,7 @@ public class Color {
         return this.blue;
     }
 
+
     private void setRed(long red) {
         this.red = red;
     }
@@ -49,10 +50,23 @@ public class Color {
         this.blue = blue;
     }
 
+    private boolean equals(Color c) {
+        return this.color == c.color;
+    }
 
-    public static void main(String[] args) {
-        Color c = new Color(134425);
+    public long getColor() {
+        return this.color;
+    }
 
-        System.out.println(c.red + " " + c.green + " " + c.blue);
+
+
+    public String toString() {
+        return this.red + " " + this.green + " " + this.blue + " " + this.color;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.color < ((Color)o).color ? -1 :
+                this.color > ((Color)o).color ? 1 : 0;
     }
 }
