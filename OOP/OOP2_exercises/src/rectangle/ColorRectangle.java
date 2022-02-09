@@ -54,10 +54,11 @@ public class ColorRectangle extends Color implements Comparable{
         return Math.abs((this.iX2 - this.iX1) * (this.iY2 - this.iY1));
     }
 
-
+    public int calcParamSum() {
+        return this.iX1 + this.iY1 + this.iX2 + this.iY2;
+    }
 
     public int compareTo(Object o) {
-
         return this.calcArea() < ((ColorRectangle)o).calcArea() ? -1 :
                 this.calcArea() > ((ColorRectangle)o).calcArea() ? 1 : 0;
     }
@@ -96,7 +97,17 @@ public class ColorRectangle extends Color implements Comparable{
     }
 
     public ColorRectangle intersectionRect(ColorRectangle r) {
+        /*return new Rectangle((this.iX1 < r.iX1) ? this.iX1 : r.iX1,
+                (this.iY1 < r.iY1) ? this.iY1 : r.iY1,
+                (this.iX2 > r.iX2) ? this.iX2 : r.iX2,
+                (this.iY2 > r.iY2) ? this.iY2 : r.iY2);*/
+
+
         ColorRectangle secondRectangle = new ColorRectangle(
+                /*(this.iX1 > r.iX1) ? this.iX1 : r.iX1,
+                (this.iY1 > r.iY1) ? this.iY1 : r.iY1,
+                (this.iX2 < r.iX2) ? this.iX2 : r.iX2,
+                (this.iY2 > r.iY2) ? this.iY2 : r.iY2,*/
                 Math.max(this.iX1, r.iX1),
                 Math.max(this.iY1, r.iY1),
                 Math.min(this.iX2, r.iX2),
@@ -108,7 +119,7 @@ public class ColorRectangle extends Color implements Comparable{
             secondRectangle.iX2 = 0;
         }
 
-        if (secondRectangle.iY1 >= secondRectangle.iX2) {
+        if (secondRectangle.iY1 >= secondRectangle.iY2) {
             secondRectangle.iY1 = 0;
             secondRectangle.iY2 = 0;
         }
@@ -117,6 +128,6 @@ public class ColorRectangle extends Color implements Comparable{
     }
 
     public String toString() {
-        return this.iX1 + " " + this.iY1 + " " + this.iX2 + " " + this.iY2 + " " + this.getColor();
+        return this.iX1 + " " + this.iY1 + " " + this.iX2 + " " + this.iY2 + " " + this.calcArea() + " " + this.getColor();
     }
 }
