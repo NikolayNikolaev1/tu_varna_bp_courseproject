@@ -50,7 +50,7 @@ public class Main {
         Arrays.sort(rectangles);
         System.out.println(Arrays.toString(rectangles));*/
 
-        RectangleArray recArr = new RectangleArray("test");
+        RectangleArray recArr = new RectangleArray("rects.txt");
         System.out.println(recArr.toString());
     }
 }

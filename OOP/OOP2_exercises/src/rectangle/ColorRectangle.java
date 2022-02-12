@@ -58,13 +58,28 @@ public class ColorRectangle extends Color implements Comparable{
         return this.iX1 + this.iY1 + this.iX2 + this.iY2;
     }
 
-    public int compareTo(Object o) {
+    /*public int compareTo(Object o) {
         return this.calcArea() < ((ColorRectangle)o).calcArea() ? -1 :
                 this.calcArea() > ((ColorRectangle)o).calcArea() ? 1 : 0;
+    }*/
+
+    public int compareTo(Object o ) {
+        if (this.equals((ColorRectangle) o)) {
+            return 0;
+        }
+
+        if (this.isInside((ColorRectangle)o)) {
+            return -1;
+        }
+
+        return 1;
     }
 
     public boolean equals(ColorRectangle rectangle) {
-        return this.compareTo(rectangle) == 0 && super.equals(new Color(rectangle.getColor()));
+        return this.iX1 == rectangle.iX1
+                && this.iY1 == rectangle.iY1
+                && this.iX2 == rectangle.iX2
+                && this.iY2 == rectangle.iY2;
     }
 
     public void translateX(int iPoints) {
@@ -85,6 +100,13 @@ public class ColorRectangle extends Color implements Comparable{
     public boolean isInside(int ptX, int ptY) {
         return this.iX1 <= ptX && this.iX2 >= ptX &&
                 this.iY1 <= ptY && this.iY2 >= ptY;
+    }
+
+    public boolean isInside(ColorRectangle secondRectangle) {
+        return this.iX1 >= secondRectangle.iX1 &&
+                this.iY1 >= secondRectangle.iY1 &&
+                this.iX2 <= secondRectangle.iX2 &&
+                this.iY2 <= secondRectangle.iY2;
     }
 
     public ColorRectangle unionRect(ColorRectangle r) {
@@ -128,6 +150,11 @@ public class ColorRectangle extends Color implements Comparable{
     }
 
     public String toString() {
-        return this.iX1 + " " + this.iY1 + " " + this.iX2 + " " + this.iY2 + " " + this.calcArea() + " " + this.getColor();
+        return "X1: " + this.iX1 +
+                " Y1: " + this.iY1 +
+                " X2: " + this.iX2 +
+                " Y2: " + this.iY2 +
+                " Area: " + this.calcArea() +
+                super.toString();
     }
 }

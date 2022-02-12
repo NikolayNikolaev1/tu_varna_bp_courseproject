@@ -16,8 +16,8 @@ public class Main {
 
         /*System.out.println(result);*/
 
-        RectangleCollection rectangleCollection = new RectangleCollection("test");
+        /*RectangleCollection rectangleCollection = new RectangleCollection("rects.txt");
         ColorRectangle rec = rectangleCollection.intersect();
-        System.out.println(rec.toString());
+        System.out.println(rec.toString());*/
     }
 }

@@ -58,15 +58,17 @@ public class Color implements Comparable {
         return this.color;
     }
 
-
-
-    public String toString() {
-        return this.red + " " + this.green + " " + this.blue + " " + this.color;
-    }
-
     @Override
     public int compareTo(Object o) {
         return this.color < ((Color)o).color ? -1 :
                 this.color > ((Color)o).color ? 1 : 0;
+    }
+
+    public String toString() {
+        return " Color: " + this.color +
+                " Red: " + this.red +
+                " Green: " + this.green +
+                " BLue: " + this.blue;
+
     }
 }
