@@ -125,14 +125,60 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	HMENU hMenu;
 	switch (message)
 	{
 	case WM_COMMAND:
 	{
+		hMenu = GetMenu(hWnd);
 		int wmId = LOWORD(wParam);
 		// Parse the menu selections:
 		switch (wmId)
 		{
+		case IDM_A1:
+			MessageBox(hWnd, "List A1", "A1", MB_OK);
+			break;
+		case IDM_A2:
+			// Deletes Menu.
+			DeleteMenu(hMenu, IDM_A8, MF_BYCOMMAND);
+			break;
+		case IDM_A3:
+			// Check/Unchek menu.
+			if (GetMenuState(hMenu, IDM_A4, MF_BYCOMMAND) == MF_CHECKED)
+			{
+				CheckMenuItem(hMenu, IDM_A4, MF_UNCHECKED);
+				break;
+			}
+
+			CheckMenuItem(hMenu, IDM_A4, MF_CHECKED);
+			break;
+		case IDM_A4:
+			// Enable/Disable menu.
+			if (GetMenuState(hMenu, IDM_A7, MF_BYCOMMAND) == MF_ENABLED)
+			{
+				EnableMenuItem(hMenu, IDM_A7, MF_DISABLED);
+				break;
+			}
+
+			EnableMenuItem(hMenu, IDM_A7, MF_ENABLED);
+			break;
+		case IDM_A9:
+			// Insert new menu.
+			if (GetMenuState(hMenu, IDM_A9 + 1, MF_BYCOMMAND) == -1)
+			{
+				MENUITEMINFO mii;
+				ZeroMemory(&mii, sizeof(mii));
+				mii.cbSize = sizeof(mii);
+				mii.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
+				mii.wID = IDM_A9 + 1;
+				mii.fType = MFT_STRING;
+				mii.dwTypeData = const_cast<char*>("A10");
+				mii.fState = MFS_ENABLED; 				InsertMenuItem(hMenu, IDM_A2, FALSE, &mii);
+			}
+			break;
+		case IDM_A12:
+			MessageBox(hWnd, "List A12", "A12", MB_OK);
+			break;
 		case IDM_T11:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_TASK1), hWnd, Task1);
 			break;
@@ -150,6 +196,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 	}
 	break;
+	case WM_RBUTTONDOWN:
+	{
+		// Right mouse button context menu.
+		hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_CONTEXT));
+		HMENU hSubMenu = GetSubMenu(hMenu, 0);
+		POINT pt = { LOWORD(lParam), HIWORD(lParam) };
+		ClientToScreen(hWnd, &pt);
+		TrackPopupMenu(hSubMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, hWnd, NULL);
+		DestroyMenu(hMenu);
+		break;
+	}
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;

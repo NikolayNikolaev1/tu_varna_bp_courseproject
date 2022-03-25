@@ -13,6 +13,8 @@
 #define IDC_EXERCISEAPPLICATION         109
 #define IDR_MAINFRAME                   128
 #define IDD_TASK1                       130
+#define IDR_POP                         133
+#define IDR_CONTEXT                     133
 #define IDC_EDIT2                       1000
 #define IDC_MESSAGE_BOX                 1001
 #define IDC_EDIT1                       1002
@@ -24,6 +26,24 @@
 #define ID_TASK1_T12                    32776
 #define IDM_T12                         32777
 #define IDM_T11                         32778
+#define ID_TASK2_A1                     32779
+#define IDM_A1                          32780
+#define ID_TASK2_A2                     32781
+#define ID_TASK2_A3                     32782
+#define ID_TASK2_A4                     32783
+#define IDM_A2                          32784
+#define IDM_A3                          32785
+#define IDM_A4                          32786
+#define ID_TASK2_A7                     32787
+#define ID_TASK2_A8                     32788
+#define ID_TASK2_A9                     32789
+#define IDM_A7                          32790
+#define IDM_A8                          32791
+#define IDM_A9                          32792
+#define ID_A3_A12                       32793
+#define ID_CONTEXT_A12                  32794
+#define ID_CONTEXT_A1                   32795
+#define IDM_A12                         32796
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -31,8 +51,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        133
-#define _APS_NEXT_COMMAND_VALUE         32779
+#define _APS_NEXT_RESOURCE_VALUE        135
+#define _APS_NEXT_COMMAND_VALUE         32799
 #define _APS_NEXT_CONTROL_VALUE         1005
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
