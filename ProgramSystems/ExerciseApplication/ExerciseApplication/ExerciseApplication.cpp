@@ -3,6 +3,7 @@
 
 #include "framework.h"
 #include "ExerciseApplication.h"
+#include "stdio.h"
 
 #define MAX_LOADSTRING 100
 
@@ -16,6 +17,7 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK    Dialog1(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    Task1(HWND, UINT, WPARAM, LPARAM);
 
 
@@ -173,7 +175,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				mii.wID = IDM_A9 + 1;
 				mii.fType = MFT_STRING;
 				mii.dwTypeData = const_cast<char*>("A10");
-				mii.fState = MFS_ENABLED; 				InsertMenuItem(hMenu, IDM_A2, FALSE, &mii);
+				mii.fState = MFS_ENABLED;				InsertMenuItem(hMenu, IDM_A2, FALSE, &mii);
 			}
 			break;
 		case IDM_A12:
@@ -184,6 +186,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDM_T12:
 			MessageBox(hWnd, "List T12", "T12", MB_OK);
+			break;
+		case IDM_DIALOG1:
+			DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, Dialog1);
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
@@ -244,6 +249,64 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	return (INT_PTR)FALSE;
 }
 
+INT_PTR CALLBACK Dialog1(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+
+	UNREFERENCED_PARAMETER(lParam);
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		SetDlgItemInt(hDlg, IDC_EDIT1, 16, true);
+		SetDlgItemInt(hDlg, IDC_EDIT2, 8, true);
+		CheckDlgButton(hDlg, IDC_RADIO1, BST_CHECKED);
+		SetDlgItemText(hDlg, IDC_EDIT4, "1.333");
+		SetDlgItemText(hDlg, IDC_EDIT5, "4.56");
+		return (INT_PTR)TRUE;
+
+	case WM_COMMAND:
+		char buf[100];
+		float first_number, second_number, result;
+
+		switch (LOWORD(wParam))
+		{
+		case IDOK:
+		case IDCANCEL:
+			EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		case IDC_EQUALS:
+			first_number = GetDlgItemInt(hDlg, IDC_EDIT1, NULL, true);
+			second_number = GetDlgItemInt(hDlg, IDC_EDIT2, NULL, true);
+
+			if (IsDlgButtonChecked(hDlg, IDC_RADIO1))
+			{
+				// Substract numbers.
+				result = first_number - second_number;
+				SetDlgItemInt(hDlg, IDC_EDIT3, result, true);
+				break;
+			}
+			// Multiply numbers.
+			result = first_number * second_number;
+			SetDlgItemInt(hDlg, IDC_EDIT3, result, true);
+			break;
+		case IDC_DIVIDE:
+			// Divide numbers.
+			GetDlgItemText(hDlg, IDC_EDIT4, buf, 100);
+			first_number = atof(buf);
+			GetDlgItemText(hDlg, IDC_EDIT5, buf, 100);
+			second_number = atof(buf);
+			
+			result = first_number / second_number;
+			sprintf_s(buf, "%10.2f", result);
+			SetDlgItemText(hDlg, IDC_EDIT6, buf);
+			break;
+		default:
+			break;
+		}
+		break;
+	}
+	return (INT_PTR)FALSE;
+}
+
 INT_PTR CALLBACK Task1(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
@@ -259,7 +322,7 @@ INT_PTR CALLBACK Task1(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		char buf[100];
 
-		switch (wParam)
+		switch (LOWORD(wParam))
 		{
 		case IDOK:
 		case IDCANCEL:
