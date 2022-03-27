@@ -18,6 +18,7 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    Dialog1(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK    SendItemMessage(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    Task1(HWND, UINT, WPARAM, LPARAM);
 
 
@@ -190,6 +191,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_DIALOG1:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, Dialog1);
 			break;
+		case IDM_SENDITEMMESSAGE:
+			DialogBox(hInst, MAKEINTRESOURCE(IDD_SEND_ITEM_MSG), hWnd, SendItemMessage);
+			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
@@ -294,11 +298,69 @@ INT_PTR CALLBACK Dialog1(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 			first_number = atof(buf);
 			GetDlgItemText(hDlg, IDC_EDIT5, buf, 100);
 			second_number = atof(buf);
-			
+
 			result = first_number / second_number;
 			sprintf_s(buf, "%10.2f", result);
 			SetDlgItemText(hDlg, IDC_EDIT6, buf);
 			break;
+		default:
+			break;
+		}
+		break;
+	}
+	return (INT_PTR)FALSE;
+}
+
+INT_PTR CALLBACK SendItemMessage(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	UNREFERENCED_PARAMETER(lParam);
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		SendDlgItemMessage(hDlg, IDC_COMBO, CB_ADDSTRING, 100, (LPARAM)"First Message");
+		SendDlgItemMessage(hDlg, IDC_COMBO, CB_ADDSTRING, 100, (LPARAM)"Second Message");
+		SendDlgItemMessage(hDlg, IDC_COMBO, CB_ADDSTRING, 100, (LPARAM)"Third Message");
+		SendDlgItemMessage(hDlg, IDC_COMBO, CB_ADDSTRING, 100, (LPARAM)"Fourth Message");
+		CheckDlgButton(hDlg, IDC_CHECK_B, BST_CHECKED);
+		CheckDlgButton(hDlg, IDC_CHECK_C, BST_CHECKED);
+		return (INT_PTR)TRUE;
+	case WM_COMMAND:
+		char buf[100];
+
+		switch (LOWORD(wParam))
+		{
+		case IDOK:
+		case IDCANCEL:
+			EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		case IDC_BTN_ENTER:
+			// Save input text in Combo Box.
+			GetDlgItemText(hDlg, IDC_EDIT, buf, 100);
+
+			if (SendDlgItemMessage(hDlg, IDC_COMBO, CB_FINDSTRING, 100, (LPARAM)buf) == -1 || strlen(buf) > 0)
+			{
+				SendDlgItemMessage(hDlg, IDC_COMBO, CB_ADDSTRING, 100, (LPARAM)buf);
+			}
+
+			break;
+		case IDC_BTN_SELECT:
+		{
+			// Output text from combo box based on checkbox.
+			int combo_index = SendDlgItemMessage(hDlg, IDC_COMBO, CB_GETCURSEL, 0, 0);
+			SendDlgItemMessage(hDlg, IDC_COMBO, CB_GETLBTEXT, combo_index, (LPARAM)buf);
+
+			if (IsDlgButtonChecked(hDlg, IDC_CHECK_B))
+			{
+				SetDlgItemText(hDlg, IDC_EDIT_B, buf);
+			}
+
+			if (IsDlgButtonChecked(hDlg, IDC_CHECK_C))
+			{
+				SetDlgItemText(hDlg, IDC_EDIT_C, buf);
+			}
+
+			break;
+		}
 		default:
 			break;
 		}
