@@ -16,12 +16,14 @@
 #define IDR_CONTEXT                     133
 #define IDD_DIALOG1                     135
 #define IDD_SEND_ITEM_MSG               136
+#define IDD_DIALOG2                     137
 #define IDC_EDIT2                       1000
 #define IDC_MESSAGE_BOX                 1001
 #define IDC_EDIT3                       1001
 #define IDC_EDIT1                       1002
 #define IDC_BUTTON1                     1003
 #define IDC_EDIT4                       1004
+#define IDC_BTN_STOP                    1004
 #define IDC_BUTTON2                     1005
 #define IDC_EDIT5                       1005
 #define IDC_DIVIDE                      1006
@@ -37,6 +39,10 @@
 #define IDC_CHECK_B                     1017
 #define IDC_CHECK_C                     1018
 #define IDC_EDIT                        1019
+#define IDC_EDIT_COUNTER                1021
+#define IDC_BTN_START                   1022
+#define IDC_PROGRESS1                   1024
+#define IDC_PROGRESS2                   1026
 #define ID_TASK1_T13                    32773
 #define ID_TASK1_T14                    32774
 #define ID_TASK1_T11                    32775
@@ -66,6 +72,8 @@
 #define ID_DIALOGS_SENDITEMMESSAGE      32801
 #define ID_SENDITEMMESSAGE              32802
 #define IDM_SENDITEMMESSAGE             32803
+#define ID_DIALOGS_DIALOG2              32804
+#define IDM_DIALOG2                     32805
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -73,9 +81,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        137
-#define _APS_NEXT_COMMAND_VALUE         32804
-#define _APS_NEXT_CONTROL_VALUE         1020
+#define _APS_NEXT_RESOURCE_VALUE        138
+#define _APS_NEXT_COMMAND_VALUE         32806
+#define _APS_NEXT_CONTROL_VALUE         1025
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif
