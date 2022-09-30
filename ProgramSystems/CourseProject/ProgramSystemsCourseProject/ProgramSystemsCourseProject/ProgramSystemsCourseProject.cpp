@@ -3,8 +3,13 @@
 
 #include "framework.h"
 #include "ProgramSystemsCourseProject.h"
+#include "stack"
+#include "string"
+#include "queue"
 
 #define MAX_LOADSTRING 100
+
+using namespace std;
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
@@ -132,11 +137,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // Parse the menu selections:
             switch (wmId)
             {
-            case IDM_ARITHMETIC:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ARITHMETIC), hWnd, Arithmetic);
-                break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+                break;
+            case IDM_ARITHMETIC:
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_ARITHMETIC), hWnd, Arithmetic);
                 break;
             case IDM_EXIT:
                 DestroyWindow(hWnd);
@@ -183,6 +188,8 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return (INT_PTR)FALSE;
 }
 
+void postfix(char* expression, char* postfixExpr);
+
 // Message handler for about box.
 INT_PTR CALLBACK Arithmetic(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -196,8 +203,12 @@ INT_PTR CALLBACK Arithmetic(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
         if (LOWORD(wParam) == IDC_CALCULATE)
         {
             char expression[100];
+            char postfixExpr[100];
             GetDlgItemText(hDlg, IDC_EXPRESSION, expression, 100);
-            SetDlgItemText(hDlg, IDC_RESULT, expression);
+            
+            postfix(expression, postfixExpr);
+
+            SetDlgItemText(hDlg, IDC_RESULT, postfixExpr);
         }
         
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
@@ -208,4 +219,114 @@ INT_PTR CALLBACK Arithmetic(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+void postfix(char* expression, char* postfixExpr)
+{
+    stack<char> operators;
+    stack<char> operands;
+    stack<char> postfixExpression;
+
+    for (int i = 0; i < 11; i++)
+    {
+        if (expression[i] == ' ')
+        {
+            continue;
+        }
+
+        /*if (isdigit(expression[i]))
+        {
+            string number;
+
+            while (isdigit(expression[i]) || expression[i] == '.')
+            {
+                number += expression[i];
+
+                if (expression[i] == '.')
+                {
+                    i++;
+                    break;
+                }
+                i++;
+            }
+
+            while (isdigit(expression[i]))
+            {
+                number += expression[i];
+                i++;
+            }
+
+            numbers.push(number);
+        }*/
+
+        if (expression[i] == '+' ||
+            expression[i] == '-' ||
+            expression[i] == '*' ||
+            expression[i] == '/')
+        {
+            if (operators.empty())
+            {
+                operators.push(expression[i]);
+                continue;
+            }
+
+            if ((expression[i] == '*' || expression[i] == '/')
+                && (operators.top() == '-' || operators.top() == '+'))
+            {
+                operators.push(expression[i]);
+                continue;
+            }
+
+
+            while (!operators.empty() && (operators.top() == '*' || operators.top() == '/'))
+            {
+                postfixExpression.push(operators.top());
+                operators.pop();
+            }
+
+            operators.push(expression[i]);
+            continue;
+        }
+
+        if (expression[i] == '(')
+        {
+            operators.push(expression[i]);
+            continue;
+        }
+
+        if (expression[i] == ')')
+        {
+            while (operators.top() != '(')
+            {
+                postfixExpression.push(operators.top());
+                operators.pop();
+            }
+
+            operators.pop();
+            continue;
+        }
+
+        postfixExpression.push(expression[i]);
+    }
+
+    while (!operators.empty())
+    {
+        postfixExpression.push(operators.top());
+        operators.pop();
+    }
+
+    //char result[100];
+    int count = postfixExpression.size();
+
+    for (int i = 0; i < count; i++)
+    {
+        postfixExpr[i] = postfixExpression.top();
+        postfixExpression.pop();
+    }
+
+    /*while (!postfixExpression.empty())
+    {
+        result += postfixExpression.top();
+        postfixExpression.pop();
+    }*/
 }
