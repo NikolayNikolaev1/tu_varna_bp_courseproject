@@ -5,7 +5,7 @@
 #include "ProgramSystemsCourseProject.h"
 #include "stack"
 #include "string"
-#include "queue"
+#include <atlstr.h>
 
 #define MAX_LOADSTRING 100
 
@@ -188,7 +188,8 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return (INT_PTR)FALSE;
 }
 
-void postfix(char* expression, char* postfixExpr);
+void calc(stack<float> &operands, const char& operation);
+void postfix(char* expression, char* postfixExpr, float& result);
 
 // Message handler for about box.
 INT_PTR CALLBACK Arithmetic(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -203,12 +204,19 @@ INT_PTR CALLBACK Arithmetic(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
         if (LOWORD(wParam) == IDC_CALCULATE)
         {
             char expression[100];
-            char postfixExpr[100];
+            char postfixExpr[100] = "";
+            float result = 0;
             GetDlgItemText(hDlg, IDC_EXPRESSION, expression, 100);
-            
-            postfix(expression, postfixExpr);
 
-            SetDlgItemText(hDlg, IDC_RESULT, postfixExpr);
+            reverse(expression, expression + strlen(expression));
+            postfix(expression, postfixExpr, result);
+            reverse(postfixExpr, postfixExpr + strlen(postfixExpr));
+
+            SetDlgItemText(hDlg, IDC_PREFIX, postfixExpr);
+
+            CString sTmp;
+            sTmp.Format("%.2f", result);
+            SetDlgItemText(hDlg, IDC_RESULT, sTmp);
         }
         
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
@@ -221,13 +229,13 @@ INT_PTR CALLBACK Arithmetic(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
     return (INT_PTR)FALSE;
 }
 
-void postfix(char* expression, char* postfixExpr)
+void postfix(char* expression, char* postfixExpr, float& result)
 {
     stack<char> operators;
-    stack<char> operands;
     stack<char> postfixExpression;
+    stack<float> operands;
 
-    for (int i = 0; i < 11; i++)
+    for (int i = 0; i < strlen(expression); i++)
     {
         if (expression[i] == ' ')
         {
@@ -280,6 +288,7 @@ void postfix(char* expression, char* postfixExpr)
 
             while (!operators.empty() && (operators.top() == '*' || operators.top() == '/'))
             {
+                calc(operands, operators.top()); // Evaluating expresion.
                 postfixExpression.push(operators.top());
                 operators.pop();
             }
@@ -288,16 +297,17 @@ void postfix(char* expression, char* postfixExpr)
             continue;
         }
 
-        if (expression[i] == '(')
+        if (expression[i] == ')')
         {
             operators.push(expression[i]);
             continue;
         }
 
-        if (expression[i] == ')')
+        if (expression[i] == '(')
         {
-            while (operators.top() != '(')
+            while (operators.top() != ')')
             {
+                calc(operands, operators.top()); // Evaluating expresion.
                 postfixExpression.push(operators.top());
                 operators.pop();
             }
@@ -306,27 +316,48 @@ void postfix(char* expression, char* postfixExpr)
             continue;
         }
 
+
+        operands.push((float)(expression[i] - '0')); // Save current number as a float.
         postfixExpression.push(expression[i]);
     }
 
     while (!operators.empty())
     {
+        calc(operands, operators.top()); // Evaluating expresion.
         postfixExpression.push(operators.top());
         operators.pop();
     }
 
-    //char result[100];
-    int count = postfixExpression.size();
+    result = operands.top();
 
-    for (int i = 0; i < count; i++)
+    for (int i = postfixExpression.size() - 1; i >= 0; i--)
     {
         postfixExpr[i] = postfixExpression.top();
         postfixExpression.pop();
     }
+}
 
-    /*while (!postfixExpression.empty())
+void calc(stack<float> &operands, const char& operation)
+{
+    float firstOperand = operands.top();
+    operands.pop();
+    float secondOperand = operands.top();
+    operands.pop();
+
+    switch (operation)
     {
-        result += postfixExpression.top();
-        postfixExpression.pop();
-    }*/
+        case '+':
+            operands.push(firstOperand + secondOperand);
+            break;
+        case '-':
+            operands.push(firstOperand - secondOperand);
+            break;
+        case '*':
+            operands.push(firstOperand * secondOperand);
+            break;
+        case '/':
+            operands.push(firstOperand / secondOperand);
+            break;
+    }
+
 }
