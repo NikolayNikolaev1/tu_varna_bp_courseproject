@@ -6,6 +6,7 @@
 #include "stack"
 #include "string"
 #include <atlstr.h>
+#include <stdexcept>
 
 #define MAX_LOADSTRING 100
 
@@ -206,17 +207,24 @@ INT_PTR CALLBACK Arithmetic(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
             char expression[100];
             char postfixExpr[100] = "";
             float result = 0;
-            GetDlgItemText(hDlg, IDC_EXPRESSION, expression, 100);
+            try
+            {
+                GetDlgItemText(hDlg, IDC_EXPRESSION, expression, 100);
 
-            reverse(expression, expression + strlen(expression));
-            postfix(expression, postfixExpr, result);
-            reverse(postfixExpr, postfixExpr + strlen(postfixExpr));
+                reverse(expression, expression + strlen(expression));
+                postfix(expression, postfixExpr, result);
+                reverse(postfixExpr, postfixExpr + strlen(postfixExpr));
 
-            SetDlgItemText(hDlg, IDC_PREFIX, postfixExpr);
+                SetDlgItemText(hDlg, IDC_PREFIX, postfixExpr);
 
-            CString sTmp;
-            sTmp.Format("%.2f", result);
-            SetDlgItemText(hDlg, IDC_RESULT, sTmp);
+                CString sTmp;
+                sTmp.Format("%.2f", result);
+                SetDlgItemText(hDlg, IDC_RESULT, sTmp);
+            }
+            catch (const invalid_argument& e)
+            {
+                MessageBox(hDlg, e.what(), "Invalid expression", MB_OK | MB_ICONERROR);
+            }
         }
         
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
@@ -234,44 +242,26 @@ void postfix(char* expression, char* postfixExpr, float& result)
     stack<char> operators;
     stack<char> postfixExpression;
     stack<float> operands;
+    bool operatorFlag = false;
 
     for (int i = 0; i < strlen(expression); i++)
     {
-        if (expression[i] == ' ')
+        switch (expression[i])
         {
+        case ' ':
             continue;
-        }
-
-        /*if (isdigit(expression[i]))
-        {
-            string number;
-
-            while (isdigit(expression[i]) || expression[i] == '.')
+        case '+':
+        case '-':
+            //operatorFlag = false;
+        case '*':
+        case '/':
+            if (operatorFlag)
             {
-                number += expression[i];
-
-                if (expression[i] == '.')
-                {
-                    i++;
-                    break;
-                }
-                i++;
+                throw invalid_argument("Can not have 2 operators one after the other.");
             }
 
-            while (isdigit(expression[i]))
-            {
-                number += expression[i];
-                i++;
-            }
+            operatorFlag = true;
 
-            numbers.push(number);
-        }*/
-
-        if (expression[i] == '+' ||
-            expression[i] == '-' ||
-            expression[i] == '*' ||
-            expression[i] == '/')
-        {
             if (operators.empty())
             {
                 operators.push(expression[i]);
@@ -285,7 +275,6 @@ void postfix(char* expression, char* postfixExpr, float& result)
                 continue;
             }
 
-
             while (!operators.empty() && (operators.top() == '*' || operators.top() == '/'))
             {
                 calc(operands, operators.top()); // Evaluating expresion.
@@ -295,16 +284,12 @@ void postfix(char* expression, char* postfixExpr, float& result)
 
             operators.push(expression[i]);
             continue;
-        }
-
-        if (expression[i] == ')')
-        {
+        case ')':
+            operatorFlag = false;
             operators.push(expression[i]);
             continue;
-        }
-
-        if (expression[i] == '(')
-        {
+        case '(':
+            operatorFlag = false;
             while (operators.top() != ')')
             {
                 calc(operands, operators.top()); // Evaluating expresion.
@@ -312,13 +297,42 @@ void postfix(char* expression, char* postfixExpr, float& result)
                 operators.pop();
             }
 
-            operators.pop();
+            operators.pop(); // Remove the closing bracket.
             continue;
+        default:
+            operatorFlag = false;
+            if (isdigit(expression[i]))
+            {
+                string number;
+                bool decimalPointFlag = false;
+
+                while (isdigit(expression[i]) || expression[i] == '.')
+                {
+                    number += expression[i];
+
+                    if (expression[i] == '.')
+                    {
+                        if (decimalPointFlag)
+                        {
+                            break;
+                        }
+
+                        decimalPointFlag = true;
+                    }
+
+                    postfixExpression.push(expression[i]);
+                    i++;
+                }
+
+                reverse(number.begin(), number.end());
+                operands.push(stof(number)); // Save current number as a float.
+                //postfixExpression.push(expression[i]);
+                i--;
+                continue;
+            }
+
+            throw invalid_argument("Invalid symbol in expression.");
         }
-
-
-        operands.push((float)(expression[i] - '0')); // Save current number as a float.
-        postfixExpression.push(expression[i]);
     }
 
     while (!operators.empty())
