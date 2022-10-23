@@ -1,23 +1,18 @@
-// ProgramSystemsCourseProject.cpp : Defines the entry point for the application.
-//
-
+#include "atlstr.h"
 #include "framework.h"
 #include "ProgramSystemsCourseProject.h"
-#include "stack"
 #include "string"
-#include <atlstr.h>
-#include <stdexcept>
+#include "stack"
+#include "stdexcept"
 
 #define MAX_LOADSTRING 100
 
 using namespace std;
 
-// Global Variables:
-HINSTANCE hInst;                                // current instance
-WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
-WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
+HINSTANCE hInst;
+WCHAR szTitle[MAX_LOADSTRING];
+WCHAR szWindowClass[MAX_LOADSTRING];
 
-// Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -32,14 +27,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // TODO: Place code here.
 
-    // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_PROGRAMSYSTEMSCOURSEPROJECT, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
-    // Perform application initialization:
+
     if (!InitInstance (hInstance, nCmdShow))
     {
         return FALSE;
@@ -49,7 +42,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
-    // Main message loop:
     while (GetMessage(&msg, nullptr, 0, 0))
     {
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -62,13 +54,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     return (int) msg.wParam;
 }
 
-
-
-//
-//  FUNCTION: MyRegisterClass()
-//
-//  PURPOSE: Registers the window class.
-//
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
     WNDCLASSEXW wcex;
@@ -90,19 +75,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassExW(&wcex);
 }
 
-//
-//   FUNCTION: InitInstance(HINSTANCE, int)
-//
-//   PURPOSE: Saves instance handle and creates main window
-//
-//   COMMENTS:
-//
-//        In this function, we save the instance handle in a global variable and
-//        create and display the main program window.
-//
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // Store instance handle in our global variable
+   hInst = hInstance;
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
@@ -118,16 +93,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-//
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  PURPOSE: Processes messages for the main window.
-//
-//  WM_COMMAND  - process the application menu
-//  WM_PAINT    - Paint the main window
-//  WM_DESTROY  - post a quit message and return
-//
-//
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
@@ -135,7 +100,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
-            // Parse the menu selections:
+
             switch (wmId)
             {
             case IDM_ABOUT:
@@ -156,7 +121,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: Add any drawing code that uses hdc here...
+
             EndPaint(hWnd, &ps);
         }
         break;
@@ -169,7 +134,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-// Message handler for about box.
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
@@ -190,9 +154,8 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 void calc(stack<float> &operands, const char& operation);
-void postfix(char* expression, char* postfixExpr, float& result);
+void prefix(char* expression, char* postfixExpr, float& result);
 
-// Message handler for about box.
 INT_PTR CALLBACK Arithmetic(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
@@ -205,20 +168,19 @@ INT_PTR CALLBACK Arithmetic(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
         if (LOWORD(wParam) == IDC_CALCULATE)
         {
             char expression[100];
-            char postfixExpr[100] = "";
+            char prefixExpr[100] = "";
             float result = 0;
+
             try
             {
                 GetDlgItemText(hDlg, IDC_EXPRESSION, expression, 100);
 
-                reverse(expression, expression + strlen(expression));
-                postfix(expression, postfixExpr, result);
-                reverse(postfixExpr, postfixExpr + strlen(postfixExpr));
+                prefix(expression, prefixExpr, result);
 
-                SetDlgItemText(hDlg, IDC_PREFIX, postfixExpr);
+                SetDlgItemText(hDlg, IDC_PREFIX, prefixExpr);
 
                 CString sTmp;
-                sTmp.Format("%.2f", result);
+                sTmp.Format("%.4f", result);
                 SetDlgItemText(hDlg, IDC_RESULT, sTmp);
             }
             catch (const invalid_argument& e)
@@ -227,7 +189,7 @@ INT_PTR CALLBACK Arithmetic(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
             }
         }
         
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        if (LOWORD(wParam) == IDCLOSE)
         {
             EndDialog(hDlg, LOWORD(wParam));
             return (INT_PTR)TRUE;
@@ -237,12 +199,14 @@ INT_PTR CALLBACK Arithmetic(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
     return (INT_PTR)FALSE;
 }
 
-void postfix(char* expression, char* postfixExpr, float& result)
+void prefix(char* expression, char* prefixExpr, float& result)
 {
-    stack<char> operators;
-    stack<char> postfixExpression;
-    stack<float> operands;
+    stack<char> operators; // stack for converting expression to prefix
+    stack<char> output; // stack for converting expression to prefix
+    stack<float> operands; // stack for calculating result of expression
     bool operatorFlag = false;
+
+    reverse(expression, expression + strlen(expression));
 
     for (int i = 0; i < strlen(expression); i++)
     {
@@ -252,7 +216,6 @@ void postfix(char* expression, char* postfixExpr, float& result)
             continue;
         case '+':
         case '-':
-            //operatorFlag = false;
         case '*':
         case '/':
             if (operatorFlag)
@@ -275,10 +238,11 @@ void postfix(char* expression, char* postfixExpr, float& result)
                 continue;
             }
 
-            while (!operators.empty() && (operators.top() == '*' || operators.top() == '/'))
+            while (!operators.empty() &&
+                (operators.top() == '*' || operators.top() == '/'))
             {
                 calc(operands, operators.top()); // Evaluating expresion.
-                postfixExpression.push(operators.top());
+                output.push(operators.top());
                 operators.pop();
             }
 
@@ -293,7 +257,7 @@ void postfix(char* expression, char* postfixExpr, float& result)
             while (operators.top() != ')')
             {
                 calc(operands, operators.top()); // Evaluating expresion.
-                postfixExpression.push(operators.top());
+                output.push(operators.top());
                 operators.pop();
             }
 
@@ -320,14 +284,13 @@ void postfix(char* expression, char* postfixExpr, float& result)
                         decimalPointFlag = true;
                     }
 
-                    postfixExpression.push(expression[i]);
+                    output.push(expression[i]);
                     i++;
                 }
 
                 reverse(number.begin(), number.end());
-                operands.push(stof(number)); // Save current number as a float.
-                //postfixExpression.push(expression[i]);
-                i--;
+                operands.push(stof(number)); // save current number as a float
+                i--; // prevents skipping next symbol
                 continue;
             }
 
@@ -338,21 +301,27 @@ void postfix(char* expression, char* postfixExpr, float& result)
     while (!operators.empty())
     {
         calc(operands, operators.top()); // Evaluating expresion.
-        postfixExpression.push(operators.top());
+        output.push(operators.top());
         operators.pop();
     }
 
     result = operands.top();
 
-    for (int i = postfixExpression.size() - 1; i >= 0; i--)
+    for (int i = output.size() - 1; i >= 0; i--)
     {
-        postfixExpr[i] = postfixExpression.top();
-        postfixExpression.pop();
+        prefixExpr[i] = output.top();
+        output.pop();
     }
+
+    reverse(prefixExpr, prefixExpr + strlen(prefixExpr));
 }
 
 void calc(stack<float> &operands, const char& operation)
 {
+    if (operands.size() < 2)
+    {
+        throw invalid_argument("Expression can not start or end with an operator.");
+    }
     float firstOperand = operands.top();
     operands.pop();
     float secondOperand = operands.top();
