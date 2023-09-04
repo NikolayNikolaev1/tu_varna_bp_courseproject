@@ -12,8 +12,7 @@
 	echo "Multiply by 5. x=" . ($x *= 5)."<br/>";
     echo "Divide by 3. x=" . ($x /= 3)."<br/>";
 	echo " Increment value by one. x=" . ($x += 1)."<br/>";
-	echo "Decrement value by one. x=" . ($x -= 1)."<br/>"; 
-	
+	echo "Decrement value by one. x=" . ($x -= 1)."<br/>";  
  ?>
 </body>
 </html>
