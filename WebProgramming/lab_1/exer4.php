@@ -4,15 +4,19 @@
 </title>
  </head>
 <body>
-    <form >
+    <form method="post">
         <p>Please enter your name:</p>
         <input name="name" type="text">
-        <input type="button" placeholder="Go">
+        <input type="submit" name="go" value="Go">
 
     </form>
 
  <?php
- echo  $_GET["name"]
+	if (isset($_POST["go"])) {
+		$name = $_POST["name"];
+		echo "Your name is $name.";
+	}
+ 
  ?>
 </body>
 </html>
