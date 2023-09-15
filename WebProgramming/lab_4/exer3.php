@@ -8,11 +8,11 @@
 	
         <p>Please enter your your information:</p>
         <label for="city">City:</label>
-        <input id="city" name="city" type="text">
+        <input id="city" name="city" type="text" required>
         <label for="month">Month:</label>
-        <input id="month" name="month" type="text">
+        <input id="month" name="month" type="text" required>
         <label for="year">Year:</label>
-        <input id="year" name="year" type="text">
+        <input id="year" name="year" type="text" required>
         </br>
         <p>Please choose the kinds of weather you experienced from the list below.</p>
         <p>Choose all that apply.</p>
@@ -31,7 +31,7 @@
             ];
 
             foreach ($weathers as $weather) {
-                echo "<input id=$weather type=checkbox value=$weather/>
+                echo "<input id=$weather type=checkbox name=weather[] value=$weather/>
                 <label for=$weather>$weather</label>
                 </br>";
             }
@@ -44,14 +44,21 @@
 
  <?php
 	if (isset($_POST["go"])) {
-		$price = $_POST["price"];
-		$age = $_POST["age"];
-		
-		if ($age <= 6 || $age >= 65) {
-			$price = 50 * ($price / 100);
-		}
-		
-		echo "Your age is $age. The price is " . round($price, 2);
+		$city = $_POST["city"];
+		$month = $_POST["month"];
+		$year = $_POST["year"];
+		$weather = $_POST["weather"];
+        
+        echo "In $city in the month of $month $year, you observed the following weather:</br>";
+        echo "<ul>";
+
+        foreach ($weather as $current_weather) {
+            $curr_weather = substr($current_weather, 0, -1);
+            echo "<li>$curr_weather</li>";
+        }
+
+        echo "</ul>";
+
 	}
  
  ?>
