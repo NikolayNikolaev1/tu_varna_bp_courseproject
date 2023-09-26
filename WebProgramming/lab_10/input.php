@@ -5,9 +5,9 @@
  </head>
  
 <style>
-    .container {
+    form {
     display: grid;
-    grid-template-columns: 1fr 3fr 5fr;
+    grid-template-columns: 1fr 3fr;
 }
 </style>
 
@@ -30,16 +30,18 @@
     </form>
 
  <?php
+    include("create.php");
+
 	if (isset($_POST["submit"])) {
 		$title = $_POST["title"];
 		$author = $_POST["author"];
 		$publisher = $_POST["publisher"];
 		$year = $_POST["year"];
 
-        $sql=" INSERT INTO books (title, author, publisher, year) VALUES ('Иван', 'Варна', 25)";
-        $result = mysql_query($sql);
+        $sql = "INSERT INTO books (title, author, publisher, year) VALUES ('$title', '$author', '$publisher', '$year')";
+        $result = mysqli_query($dbConn, $sql);
 
-        if (!$result) die('Error: ' . mysql_error());
+        if (!$result) die('Error: ' . mysqli_error());
  
         echo "Values inserted.";
 	}

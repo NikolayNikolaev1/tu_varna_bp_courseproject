@@ -12,4 +12,6 @@
     <br />
     <a href="/demo/delete.php">Delete</a>
 </body>
+
+<?php include("create.php") ?>
 </html>
