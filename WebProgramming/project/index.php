@@ -1,18 +1,12 @@
 <?php
 require("database/index.php");
 require("models/author.php");
+require("services/author.service.php");
 
-$first_name = "Test";
-$last_name = "Tester";
-$sql = "INSERT INTO author(first_name, last_name) VALUES(:first_name, :last_name)";
-$sql = "SELECT * FROM author WHERE id = 1";
-$statement = $pdo->prepare($sql);
-$statement->execute();
-$statement->execute([":first_name" => $first_name, ":last_name" => $last_name]);
-// $statement->setFetchMode(PDO::FETCH_CLASS, "Author");
-
-$author = $statement->fetchObject("Author");
-
-echo $author->first_name;
-
+$authorService = new AuthorService($pdo);
+$author = $authorService->find(4);
+$authorService->delete(4);
+// var_dump($author);
+// var_dump($author2);
+// var_dump($author);
 ?>

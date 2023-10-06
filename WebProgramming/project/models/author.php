@@ -2,8 +2,8 @@
 
 class Author
 {
-    private $id;
-    private $first_name;
-    private $last_name;
+    public $id;
+    public $first_name;
+    public $last_name;
 }
 ?>
