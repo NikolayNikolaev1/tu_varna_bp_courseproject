@@ -1,5 +1,5 @@
 <?php
-require_once("models/author.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/models/author.php");
 
 class AuthorService
 {
@@ -8,6 +8,14 @@ class AuthorService
     public function __construct($db)
     {
         $this->db = $db;
+    }
+
+    public function all()
+    {
+        $statement = $this->db->prepare("SELECT * FROM author");
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function create($first_name, $last_name)
@@ -35,7 +43,8 @@ class AuthorService
         return $statement->fetchObject("Author");
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         $statement = $this->db->prepare("DELETE FROM author WHERE id = :id");
         $statement->execute([":id" => $id]);
     }
