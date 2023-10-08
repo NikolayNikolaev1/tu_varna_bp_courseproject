@@ -9,7 +9,7 @@
 
     <?php
     require_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/database/index.php");
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/services/author.service.php");
+    require_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/services/position.service.php");
 
     $author_service = new AuthorService($pdo);
 
@@ -18,16 +18,14 @@
     <table>
         <tr>
             <th>ID</th>
-            <th>First Name</th>
-            <th>LastName</th>
-            <th>Actions</th>
+            <th>Name</th>
         </tr>";
 
-    foreach ($authors as $author) {
+    foreach ($positions as $position) {
         echo "<tr>";
         $current_id = 0;
 
-        foreach ($author as $key => $value) {
+        foreach ($position as $key => $value) {
             echo "<td>$value</td>";
 
             if ($key === "id") {
@@ -37,7 +35,7 @@
 
         echo "<td><a href=/test>Edit</a>";
         echo "<form method=post>
-                <input type=hidden  name=id value=$current_id>
+                <input type=hidden name=id value=$current_id>
                 <input type=submit name=delete value=Delete>
             </form>
             </td></tr>";
