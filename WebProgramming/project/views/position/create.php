@@ -6,7 +6,7 @@
 </head>
 
 <body>
-    <form method="post" action="/WebProjectTU/views/position/table.php">
+    <form method="post" >
 
         <h1>Create Position.</h1>
         <label for="name">Name:</label>
@@ -24,7 +24,7 @@
         $name = $_POST["name"];
 
         $position_service = new PositionService($pdo);
-        $position_service->create($name);
+        $position = $position_service->create($name);
     }
 
     ?>

@@ -9,23 +9,26 @@
 
     <?php
     require_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/database/index.php");
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/services/position.service.php");
+    require_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/services/employee.service.php");
 
-    $position_service = new PositionService($pdo);
+    $employee_service = new EmployeeService($pdo);
 
-    $positions = $position_service->all();
+    $employees = $employee_service->all();
     echo "
     <table>
         <tr>
             <th>ID</th>
-            <th>Name</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Position</th>
+            <th>Actions</th>
         </tr>";
 
-    foreach ($positions as $position) {
+    foreach ($employees as $employee) {
         echo "<tr>";
         $current_id = 0;
 
-        foreach ($position as $key => $value) {
+        foreach ($employee as $key => $value) {
             echo "<td>$value</td>";
 
             if ($key === "id") {
@@ -35,7 +38,7 @@
 
         echo "<td><a href=/test>Edit</a>";
         echo "<form method=post>
-                <input type=hidden name=id value=$current_id>
+                <input type=hidden  name=id value=$current_id>
                 <input type=submit name=delete value=Delete>
             </form>
             </td></tr>";
@@ -44,8 +47,9 @@
     echo "</table>";
 
     if (isset($_POST["delete"])) {
-        $current_position_id = $_POST["id"];
-        $position_service->delete($current_position_id);
+        $current_employee_id = $_POST["id"];
+        $employee_service->delete($current_employee_id);
+
     }
     ?>
 

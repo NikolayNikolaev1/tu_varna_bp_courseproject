@@ -23,12 +23,15 @@ $pdo->query("CREATE TABLE IF NOT EXISTS genre(
 
 $pdo->query("CREATE TABLE IF NOT EXISTS book(
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    author_id INT NOT NULL REFERENCES author(id),
+    author_id INT NOT NULL,
     release_year VARCHAR(4),
-    publisher_id INT NOT NULL REFERENCES publisher(id),
+    publisher_id INT NOT NULL,
     genre_id INT NOT NULL REFERENCES genre(id),
     loan_count INT NOT NULL DEFAULT 0,
-    is_available BOOLEAN NOT NULL DEFAULT 1
+    is_available BOOLEAN NOT NULL DEFAULT 1,
+    FOREIGN KEY (author_id) REFERENCES author(id),
+    FOREIGN KEY (publisher_id) REFERENCES publisher(id),
+    FOREIGN KEY (genre_id) REFERENCES genre(id)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8");
 
 $pdo->query("CREATE TABLE IF NOT EXISTS job_position(
@@ -40,9 +43,10 @@ $pdo->query("CREATE TABLE IF NOT EXISTS employee(
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
-    position_id INT NOT NULL REFERENCES job_position(id),
+    position_id INT NOT NULL,
     phone_number VARCHAR(12) NULL UNIQUE,
-    email VARCHAR(50) NULL UNIQUE
+    email VARCHAR(50) NULL UNIQUE,
+    FOREIGN KEY (position_id) REFERENCES job_position(id)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8");
 
 $pdo->query("CREATE TABLE IF NOT EXISTS reader(
@@ -55,11 +59,14 @@ $pdo->query("CREATE TABLE IF NOT EXISTS reader(
 
 $pdo->query("CREATE TABLE IF NOT EXISTS loan(
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    book_id INT NOT NULL REFERENCES book(id),
-    reader_id INT NOT NULL REFERENCES reader(id),
-    employee_id INT NOT NULL REFERENCES employee(id),
+    book_id INT NOT NULL,
+    reader_id INT NOT NULL,
+    employee_id INT NOT NULL,
     loan_date DATE NOT NULL,
-    return_term DATE NOT NULL
+    return_term DATE NOT NULL,
+    FOREIGN KEY (book_id) REFERENCES book(id),
+    FOREIGN KEY (reader_id) REFERENCES reader(id),
+    FOREIGN KEY (employee_id) REFERENCES employee(id)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8");
 
 ?>

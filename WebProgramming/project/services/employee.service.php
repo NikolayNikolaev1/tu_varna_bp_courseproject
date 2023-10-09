@@ -12,7 +12,8 @@ class EmployeeService
 
     public function all()
     {
-        $statement = $this->db->prepare("SELECT * FROM employee");
+        // TODO: RELATIONS FIX: FK
+        $statement = $this->db->prepare("SELECT e.id, e.first_name, e.last_name, jp.name FROM employee e JOIN job_position jp ON e.position_id = jp.id");
         $statement->execute();
 
         return $statement->fetchAll(PDO::FETCH_OBJ);
