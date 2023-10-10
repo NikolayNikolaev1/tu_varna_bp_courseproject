@@ -13,37 +13,14 @@
 
     $author_service = new AuthorService($pdo);
 
-    $authors = $author_service->all();
-    echo "
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>First Name</th>
-            <th>LastName</th>
-            <th>Actions</th>
-        </tr>";
+    $collection = $author_service->all();
+    $table_header = "
+    <th>ID</th>
+    <th>First Name</th>
+    <th>LastName</th>
+    <th>Actions</th>";
 
-    foreach ($authors as $author) {
-        echo "<tr>";
-        $current_id = 0;
-
-        foreach ($author as $key => $value) {
-            echo "<td>$value</td>";
-
-            if ($key === "id") {
-                $current_id = $value;
-            }
-        }
-
-        echo "<td><a href=/test>Edit</a>";
-        echo "<form method=post>
-                <input type=hidden  name=id value=$current_id>
-                <input type=submit name=delete value=Delete>
-            </form>
-            </td></tr>";
-    }
-
-    echo "</table>";
+    include($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/views/templates/table.php");
 
     if (isset($_POST["delete"])) {
         $current_author_id = $_POST["id"];
