@@ -10,10 +10,27 @@ class EmployeeService
         $this->db = $db;
     }
 
-    public function all()
+    public function all($top_books = false)
     {
-        // TODO: RELATIONS FIX: FK
-        $statement = $this->db->prepare("SELECT e.id, e.first_name, e.last_name, jp.name FROM employee e JOIN job_position jp ON e.position_id = jp.id");
+        $sql =
+            "SELECT 
+            e.id, 
+            e.first_name, 
+            e.last_name, 
+            jp.name 
+        FROM employee e 
+        JOIN job_position jp 
+        ON e.position_id = jp.id
+        JOIN loan l
+        ON e.id = l.employee_id
+        JOIN book b
+        ON l.book_id = b.id";
+
+        if ($top_books) {
+            $sql = "TOP 5 " . $sql . " ORDER BY DESC b.loan_count";
+        }
+
+        $statement = $this->db->prepare($sql);
         $statement->execute();
 
         return $statement->fetchAll(PDO::FETCH_OBJ);

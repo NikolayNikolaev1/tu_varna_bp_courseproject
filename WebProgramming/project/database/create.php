@@ -23,6 +23,7 @@ $pdo->query("CREATE TABLE IF NOT EXISTS genre(
 
 $pdo->query("CREATE TABLE IF NOT EXISTS book(
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(30) NOT NULL,
     author_id INT NOT NULL,
     release_year VARCHAR(4),
     publisher_id INT NOT NULL,
