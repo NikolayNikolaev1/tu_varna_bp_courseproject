@@ -1,33 +1,17 @@
-<!DOCTYPE html>
-<html>
+<?php
+include_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/database/index.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/services/position.service.php");
 
-<head>
-    <title>My first program!</title>
-</head>
+$data = [["name" => "name", "type" => "text"]];
+$resource_name = "position";
 
-<body>
-    <form method="post" >
+include($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/views/templates/create.php");
 
-        <h1>Create Position.</h1>
-        <label for="name">Name:</label>
-        <input id="name" name="name" type="text">
-        <br />
-        <input type="submit" name="create" value="Create">
+if (isset($_POST["create"])) {
+    $name = $_POST["name"];
 
-    </form>
+    $position_service = new PositionService($pdo);
+    $position = $position_service->create($name);
+}
 
-    <?php
-    include_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/database/index.php");
-    include_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/services/position.service.php");
-
-    if (isset($_POST["create"])) {
-        $name = $_POST["name"];
-
-        $position_service = new PositionService($pdo);
-        $position = $position_service->create($name);
-    }
-
-    ?>
-</body>
-
-</html>
+?>
