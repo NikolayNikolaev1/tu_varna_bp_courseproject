@@ -16,7 +16,6 @@
 
                 <?php foreach ($curr_el as $key => $value): ?>
                     <?php if ($key == "id") {
-
                         $current_id = $value;
                     }
                     ?>
@@ -27,7 +26,10 @@
                 <?php endforeach; ?>
 
                 <td>
-                    <a href="/test">Edit</a>
+                    <form method="post" action="/WebProjectTU/views/author/edit.php">
+                        <input type="hidden" name="id" value=<?php echo $current_id ?>>
+                        <input type="submit" name="edit-page" value="Edit">
+                    </form>
                     <form method="post">
                         <input type="hidden" name="id" value=<?php echo $current_id ?>>
                         <input type="submit" name="delete" value="Delete">
