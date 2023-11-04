@@ -12,15 +12,38 @@ class LoanService
 
     public function all()
     {
+
         $statement = $this->db->prepare(
-            "SELECT l.id, b.title, r.first_name, l.loan_date, l.return_term
+            "SELECT * FROM loan"
+        );
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function filter_by_reader($reader_name)
+    {
+        $statement = $this->db->prepare(
+            "SELECT 
+                l.id,
+                b.title,
+                r.first_name AS reader_name,
+                e.first_name,
+                l.loan_date,
+                l.return_term,
+                b.loan_count
             FROM loan l 
             JOIN book b 
             ON l.book_id = b.id
             JOIN reader r
-            ON l.reader_id = r.id"
+            ON l.reader_id = r.id
+            JOIN employee e
+            ON e.id = l.employee_id
+            WHERE r.first_name = :reader_name"
         );
-        $statement->execute();
+        $statement->execute([
+            ":reader_name" => $reader_name
+        ]);
 
         return $statement->fetchAll(PDO::FETCH_OBJ);
     }
@@ -38,6 +61,17 @@ class LoanService
             ":loan_date" => $loan_date,
             ":return_term" => $return_term
         ]);
+
+        $statement = $this->db->prepare(
+            "UPDATE book 
+                SET loan_count = loan_count + 1
+             WHERE id = :book_id"
+        );
+
+        $statement->execute([
+            ":book_id" => $book_id,
+        ]);
+
         $reader_id = $this->db->lastInsertId();
 
         return $this->find($reader_id);
@@ -55,10 +89,11 @@ class LoanService
     {
         $statement = $this->db->prepare(
             "UPDATE loan 
-            SET first_name = :first_name,
-                last_name = :last_name,
-                phone_number = :phone_number,
-                email = :email
+            SET book_id = :book_id,
+                reader_id = :reader_id,
+                employee_id = :employee_id,
+                loan_date = :loan_date,
+                return_term = :return_term
              WHERE id = :id"
         );
         $statement->execute([

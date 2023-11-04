@@ -1,7 +1,7 @@
 <?php
 class Publisher
 {
-    private $id;
-    private $name;
+    public $id;
+    public $name;
 }
 ?>

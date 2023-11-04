@@ -2,10 +2,16 @@
 include_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/database/index.php");
 include_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/services/position.service.php");
 
-$data = [["name" => "name", "type" => "text"]];
-$resource_name = "position";
+$data = [
+    [
+        "name" => "name",
+        "label" => "Name",
+        "type" => "text"
+    ]
+];
+$resource_name = "Position";
 
-include($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/views/templates/create.php");
+include($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/views/templates/form.php");
 
 if (isset($_POST["create"])) {
     $name = $_POST["name"];

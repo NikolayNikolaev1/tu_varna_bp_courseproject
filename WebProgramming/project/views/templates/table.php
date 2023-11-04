@@ -2,11 +2,13 @@
 <html>
 
 <head>
-    <title>Page Title</title>
+    <title>Page Table</title>
+    <?php include($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/utils/layout-constants.php");
+    echo $bootstrap_scripts; ?>
 </head>
 
 <body>
-    <table>
+    <table class="table">
         <tr>
             <?php echo $table_header ?>
 
@@ -21,18 +23,18 @@
                     ?>
 
                     <td>
-                        <?php echo $value ?>
+                        <input class="form-control" name=<?php echo $key ?> value=<?php echo $value ?>         <?php echo $key == "id" ? "disabled" : "" ?>>
                     </td>
                 <?php endforeach; ?>
 
                 <td>
-                    <form method="post" action="/WebProjectTU/views/author/edit.php">
+                    <form method="post">
                         <input type="hidden" name="id" value=<?php echo $current_id ?>>
-                        <input type="submit" name="edit-page" value="Edit">
+                        <input class="btn btn-warning" type="submit" name="edit-page" value="Edit">
                     </form>
                     <form method="post">
                         <input type="hidden" name="id" value=<?php echo $current_id ?>>
-                        <input type="submit" name="delete" value="Delete">
+                        <input class="btn btn-danger" type="submit" name="delete" value="Delete">
                     </form>
                 </td>
 

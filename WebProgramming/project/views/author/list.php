@@ -8,7 +8,7 @@ $collection = $author_service->all();
 $table_header = "
     <th>ID</th>
     <th>First Name</th>
-    <th>LastName</th>
+    <th>Last Name</th>
     <th>Actions</th>";
 
 include($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/views/templates/table.php");

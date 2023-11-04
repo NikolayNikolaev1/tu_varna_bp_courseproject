@@ -1,11 +1,11 @@
 <?php
 class Employee
 {
-    private $id;
-    private $first_name;
-    private $last_name;
-    private $position_id;
-    private $phone_number;
-    private $email;
+    public $id;
+    public $first_name;
+    public $last_name;
+    public $position_id;
+    public $phone_number;
+    public $email;
 }
 ?>
