@@ -8,7 +8,17 @@
 </head>
 
 <body>
-    <table class="table">
+    <?php include($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/views/templates/navigation.php");
+    echo $bootstrap_scripts; ?>
+
+    <h3>
+        <small class="text-muted">
+            <?php echo $resource_name ?>
+        </small>
+        List
+    </h3>
+
+    <table class="table p-3 mb-2 bg-info text-dark">
         <tr>
             <?php echo $table_header ?>
 
@@ -42,6 +52,10 @@
         <?php endforeach; ?>
         </tr>
     </table>
+
+    <script src=https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js
+        integrity=sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd
+        crossorigin=anonymous></script>
 
 </body>
 

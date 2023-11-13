@@ -38,8 +38,11 @@ $table_header = "
 </head>
 
 <body>
+    
+<?php include($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/views/templates/navigation.php");
+    echo $bootstrap_scripts; ?>
 
-    <table class="table">
+    <table class="p-3 mb-2 bg-info text-dark table">
         <thead>
 
             <tr>
@@ -131,6 +134,11 @@ $table_header = "
         <input class="btn btn-primary" type="submit" name="filter-genre" value="Filter by Author">
         
     </form>
+    
+    <script src=https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js
+        integrity=sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd
+        crossorigin=anonymous></script>
+
 
 </html>
 

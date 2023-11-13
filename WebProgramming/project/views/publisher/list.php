@@ -10,6 +10,7 @@ $table_header = "
     <th>Name</th>
     <th>Actions</th>";
 
+$resource_name = "Publisher";
 include($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/views/templates/table.php");
 
 if (isset($_POST["delete"])) {

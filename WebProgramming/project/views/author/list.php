@@ -4,6 +4,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/services/author.service.
 
 $author_service = new AuthorService($pdo);
 
+$resource_name = "Author";
 $collection = $author_service->all();
 $table_header = "
     <th>ID</th>

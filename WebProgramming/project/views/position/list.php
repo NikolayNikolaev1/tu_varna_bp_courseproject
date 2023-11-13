@@ -7,6 +7,7 @@ $position_service = new PositionService($pdo);
 $collection = $position_service->all();
 $table_header = "<th>ID</th><th>Name</th>";
 
+$resource_name = "Position";
 include($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/views/templates/table.php");
 
 if (isset($_POST["delete"])) {

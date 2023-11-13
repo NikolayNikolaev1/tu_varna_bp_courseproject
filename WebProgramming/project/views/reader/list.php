@@ -13,6 +13,7 @@ $table_header = "
     <th>Email</th>
     <th>Actions</th>";
 
+    $resource_name = "Reader";
 include($_SERVER['DOCUMENT_ROOT'] . "/WebProjectTU/views/templates/table.php");
 
 if (isset($_POST["delete"])) {
